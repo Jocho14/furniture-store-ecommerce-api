@@ -10,7 +10,7 @@ import { Account } from "../accounts/account.entity";
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
-  userId!: number;
+  user_id!: number;
 
   @Column({ nullable: false })
   firstName!: string;
