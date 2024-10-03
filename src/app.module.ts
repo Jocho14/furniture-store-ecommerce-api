@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { AccountModule } from "./modules/accounts/account.module";
+import { ProductModule } from "./modules/products/product.module";
 
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -19,6 +20,7 @@ dotenv.config();
       synchronize: false, // set to false in production
     }),
     AccountModule,
+    ProductModule,
   ],
 })
 export class AppModule {}

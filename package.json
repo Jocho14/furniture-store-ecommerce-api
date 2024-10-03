@@ -16,9 +16,13 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
+    "@firebase/firestore": "^4.7.3",
     "@nestjs/platform-express": "^10.4.4",
     "@nestjs/typeorm": "^10.0.2",
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
     "dotenv": "^16.4.5",
+    "firebase": "^10.14.0",
     "pg": "^8.13.0",
     "typeorm": "^0.3.20"
   }
