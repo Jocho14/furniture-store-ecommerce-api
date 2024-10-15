@@ -12,10 +12,10 @@ export class Product {
   @PrimaryGeneratedColumn()
   product_id!: number;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ nullable: false, type: "varchar", length: 255 })
   name!: string;
 
-  @Column("numeric", { precision: 10, scale: 2 })
+  @Column("numeric", { nullable: false, precision: 10, scale: 2 })
   price!: number;
 
   @Column({ type: "text" })

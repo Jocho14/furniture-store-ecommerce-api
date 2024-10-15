@@ -11,12 +11,12 @@ export class ProductRepository {
     private readonly repository: Repository<Product>
   ) {}
 
-  async findAll(): Promise<Product[]> {
-    return this.repository.find();
+  async getAll(): Promise<Product[]> {
+    return await this.repository.find();
   }
 
   async getById(id: number): Promise<Product | null> {
-    return this.repository.findOne({ where: { product_id: id } });
+    return await this.repository.findOne({ where: { product_id: id } });
   }
 
   async uploadFile(

@@ -17,23 +17,23 @@ import { Product } from "./product.entity";
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get()
-  findAll(): Promise<Product[]> {
-    return this.productService.findAll();
+  @Get("all-with-thumbnails")
+  async getAllWithThumbnails(): Promise<Product[]> {
+    return await this.productService.getAllWithThumbnails();
   }
 
   @Get(":id")
-  getById(@Param("id") id: number): Promise<Product | null> {
-    return this.productService.getById(id);
+  async getById(@Param("id") id: number): Promise<Product | null> {
+    return await this.productService.getById(id);
   }
 
   @Post(":id/upload-file")
   @UseInterceptors(FileInterceptor("file"))
-  uploadImage(
+  async uploadImage(
     @Param("id") id: number,
     @UploadedFile()
     file: Express.Multer.File
   ): Promise<string | undefined> {
-    return this.productService.uploadFile(id, file);
+    return await this.productService.uploadFile(id, file);
   }
 }

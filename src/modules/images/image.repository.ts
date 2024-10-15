@@ -20,4 +20,10 @@ export class ImageRepository {
       return "error";
     }
   }
+
+  async getThumbnail(productId: number): Promise<Image | null> {
+    return await this.repository.findOne({
+      where: { product: { product_id: productId }, is_thumbnail: true },
+    });
+  }
 }

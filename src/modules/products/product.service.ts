@@ -11,8 +11,23 @@ export class ProductService {
     private readonly imageService: ImageService
   ) {}
 
-  findAll(): Promise<Product[]> {
-    return this.productRepository.findAll();
+  async getAllWithThumbnails(): Promise<any> {
+    const allProducts = await this.productRepository.getAll();
+    const productsWithThumbnails = await Promise.all(
+      allProducts.map(async (product) => {
+        const thumbnail = await this.imageService.getThumbnailForProduct(
+          product.product_id
+        );
+        return {
+          name: product.name,
+          price: product.price,
+          thumbnail: thumbnail?.url || "null",
+          alt: thumbnail?.alt || "null",
+        };
+      })
+    );
+
+    return productsWithThumbnails;
   }
 
   getById(id: number): Promise<Product | null> {

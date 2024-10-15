@@ -23,8 +23,11 @@ export class Image {
   @Column({ nullable: false, type: "varchar", length: 255 })
   url!: string;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ nullable: false, type: "varchar", length: 255 })
   alt!: string;
+
+  @Column({ nullable: false })
+  is_thumbnail!: boolean;
 
   @ManyToOne(() => Product, (product) => product.images, {
     onDelete: "CASCADE",

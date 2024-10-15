@@ -35,4 +35,8 @@ export class ImageService {
 
     return `Product with id: ${productId}, contains: ${images.items.length} images`;
   }
+
+  async getThumbnailForProduct(productId: number): Promise<Image | null> {
+    return await this.imageRepository.getThumbnail(productId);
+  }
 }
