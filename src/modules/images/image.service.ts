@@ -11,31 +11,35 @@ import { Image } from "./image.entity";
 export class ImageService {
   constructor(private readonly imageRepository: ImageRepository) {}
 
-  async uploadImages(imageDto: ImageDto): Promise<string | undefined> {
-    imageDto.files.map(async (file, index) => {
-      const storageRef = ref(
-        storage,
-        firestoreConfig.storagePaths.productImage(
+  async uploadImages(imageDto: ImageDto): Promise<string[] | undefined> {
+    const downloadUrls: string[] = await Promise.all(
+      imageDto.files.map(async (file, index) => {
+        const storageRef = ref(
+          storage,
+          firestoreConfig.storagePaths.productImage(
+            imageDto.productId,
+            `${imageDto.productId.toString()}_${index}`
+          )
+        );
+
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const uploadResult = await uploadBytes(storageRef, blob);
+        const downloadUrl = await getDownloadURL(uploadResult.ref);
+
+        const image = new Image(
           imageDto.productId,
-          imageDto.productId.toString()
-        )
-      );
+          downloadUrl,
+          file.filename,
+          index === 0
+        );
 
-      const blob = new Blob([file.buffer], { type: file.mimetype });
+        await this.imageRepository.save(image);
 
-      const uploadResult = await uploadBytes(storageRef, blob);
-      const downloadUrl = await getDownloadURL(uploadResult.ref);
+        return downloadUrl;
+      })
+    );
 
-      const image = new Image(
-        imageDto.productId,
-        downloadUrl,
-        file.filename,
-        index === 0
-      );
-
-      this.imageRepository.save(image);
-    });
-    return "uploaded!";
+    return downloadUrls;
   }
 
   async getAllImageNames(productId: string): Promise<string> {

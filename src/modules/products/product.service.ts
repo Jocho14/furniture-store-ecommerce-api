@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ProductRepository } from "./product.repository";
 import { Product } from "./product.entity";
-
+import { AddProductResponse } from "./responseType";
 import { ImageService } from "../images/image.service";
 import { DetailedProductDto } from "./DTO/detailedProduct.dto";
 import { ImageDto } from "../images/DTO/image.dto";
@@ -39,20 +39,27 @@ export class ProductService {
   async uploadFiles(
     id: number,
     files: Express.Multer.File[]
-  ): Promise<string | undefined> {
+  ): Promise<string[] | undefined> {
     const imageDto = new ImageDto(id, files);
     return await this.imageService.uploadImages(imageDto);
   }
 
-  async addProduct(detailedProductDto: DetailedProductDto) {
-    const product = new Product(
-      detailedProductDto.details.name,
-      detailedProductDto.details.price,
-      detailedProductDto.details.description
-    );
-    const productId = await this.productRepository.addProduct(product);
-    const imageDto = new ImageDto(productId, detailedProductDto.images);
-    await this.imageService.uploadImages(imageDto);
-    return "Product added!";
+  async addProduct(
+    detailedProductDto: DetailedProductDto
+  ): Promise<AddProductResponse> {
+    try {
+      const product = new Product(
+        detailedProductDto.details.name,
+        detailedProductDto.details.price,
+        detailedProductDto.details.description
+      );
+      const productId = await this.productRepository.addProduct(product);
+      const imageDto = new ImageDto(productId, detailedProductDto.images);
+      const images = await this.imageService.uploadImages(imageDto);
+
+      return { name: product.name, thumbnailUrl: images?.at(0) || "null" };
+    } catch (error) {
+      return { error: "An error occurred" };
+    }
   }
 }

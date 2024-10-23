@@ -14,7 +14,7 @@ import {
   FileFieldsInterceptor,
 } from "@nestjs/platform-express";
 import { DetailedProductDto } from "./DTO/detailedProduct.dto";
-
+import { AddProductResponse } from "./responseType";
 import { ProductService } from "./product.service";
 import { Product } from "./product.entity";
 
@@ -38,7 +38,7 @@ export class ProductController {
     @Param("id") id: number,
     @UploadedFile()
     file: Express.Multer.File[]
-  ): Promise<string | undefined> {
+  ): Promise<string[] | undefined> {
     return await this.productService.uploadFiles(id, file);
   }
 
@@ -47,7 +47,7 @@ export class ProductController {
   async addProduct(
     @UploadedFiles() files: { images?: Express.Multer.File[] },
     @Body() body: any
-  ): Promise<string> {
+  ): Promise<AddProductResponse> {
     const detailedProductDto: DetailedProductDto = {
       images: files.images || [],
       details: {
@@ -57,6 +57,7 @@ export class ProductController {
       },
       quantity: parseInt(body.quantity, 10),
     };
+
     return await this.productService.addProduct(detailedProductDto);
   }
 }
