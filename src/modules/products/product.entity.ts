@@ -9,6 +9,12 @@ import { Image } from "../images/image.entity";
 
 @Entity("products")
 export class Product {
+  constructor(name: string, price: number, description: string) {
+    this.name = name;
+    this.price = price;
+    this.description = description;
+  }
+
   @PrimaryGeneratedColumn()
   product_id!: number;
 

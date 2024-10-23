@@ -4,29 +4,38 @@ import { ref, listAll, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firestoreConfig, firestoreDb, storage } from "../../firebase";
 
 import { ImageRepository } from "./image.repository";
+import { ImageDto } from "./DTO/image.dto";
 import { Image } from "./image.entity";
 
 @Injectable()
 export class ImageService {
   constructor(private readonly imageRepository: ImageRepository) {}
 
-  async uploadImage(
-    productId: number,
-    file: Express.Multer.File
-  ): Promise<string | undefined> {
-    const storageRef = ref(
-      storage,
-      firestoreConfig.storagePaths.productImage(productId, "1_1")
-    );
+  async uploadImages(imageDto: ImageDto): Promise<string | undefined> {
+    imageDto.files.map(async (file, index) => {
+      const storageRef = ref(
+        storage,
+        firestoreConfig.storagePaths.productImage(
+          imageDto.productId,
+          imageDto.productId.toString()
+        )
+      );
 
-    const blob = new Blob([file.buffer], { type: file.mimetype });
+      const blob = new Blob([file.buffer], { type: file.mimetype });
 
-    const uploadResult = await uploadBytes(storageRef, blob);
-    const downloadUrl = await getDownloadURL(uploadResult.ref);
+      const uploadResult = await uploadBytes(storageRef, blob);
+      const downloadUrl = await getDownloadURL(uploadResult.ref);
 
-    const image = new Image(productId, downloadUrl);
+      const image = new Image(
+        imageDto.productId,
+        downloadUrl,
+        file.filename,
+        index === 0
+      );
 
-    return this.imageRepository.save(image);
+      this.imageRepository.save(image);
+    });
+    return "uploaded!";
   }
 
   async getAllImageNames(productId: string): Promise<string> {

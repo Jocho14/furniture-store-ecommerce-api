@@ -15,7 +15,6 @@ async function bootstrap() {
     credentials: true,
   });
   const port = process.env.PORT || 3000;
-  console.log(process.env.DB_HOST);
   await app.listen(port);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

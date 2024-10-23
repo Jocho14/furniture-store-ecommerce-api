@@ -3,6 +3,8 @@ import { ProductRepository } from "./product.repository";
 import { Product } from "./product.entity";
 
 import { ImageService } from "../images/image.service";
+import { DetailedProductDto } from "./DTO/detailedProduct.dto";
+import { ImageDto } from "../images/DTO/image.dto";
 
 @Injectable()
 export class ProductService {
@@ -30,14 +32,27 @@ export class ProductService {
     return productsWithThumbnails;
   }
 
-  getById(id: number): Promise<Product | null> {
-    return this.productRepository.getById(id);
+  async getById(id: number): Promise<Product | null> {
+    return await this.productRepository.getById(id);
   }
 
-  uploadFile(
+  async uploadFiles(
     id: number,
-    file: Express.Multer.File
+    files: Express.Multer.File[]
   ): Promise<string | undefined> {
-    return this.imageService.uploadImage(id, file);
+    const imageDto = new ImageDto(id, files);
+    return await this.imageService.uploadImages(imageDto);
+  }
+
+  async addProduct(detailedProductDto: DetailedProductDto) {
+    const product = new Product(
+      detailedProductDto.details.name,
+      detailedProductDto.details.price,
+      detailedProductDto.details.description
+    );
+    const productId = await this.productRepository.addProduct(product);
+    const imageDto = new ImageDto(productId, detailedProductDto.images);
+    await this.imageService.uploadImages(imageDto);
+    return "Product added!";
   }
 }

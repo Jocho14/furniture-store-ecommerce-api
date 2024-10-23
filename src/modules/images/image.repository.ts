@@ -12,13 +12,8 @@ export class ImageRepository {
   ) {}
 
   async save(image: Image): Promise<string | undefined> {
-    try {
-      await this.repository.save(image);
-      return "uploaded!";
-    } catch (error) {
-      console.error("Error saving image:", error);
-      return "error";
-    }
+    await this.repository.save(image);
+    return "Image saved!";
   }
 
   async getThumbnail(productId: number): Promise<Image | null> {

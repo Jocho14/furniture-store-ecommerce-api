@@ -1,7 +1,9 @@
 import { Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { plainToClass } from "class-transformer";
 
+import { BasicProductDto } from "./DTO/basicProduct.dto";
 import { Product } from "./product.entity";
 
 @Injectable()
@@ -19,9 +21,8 @@ export class ProductRepository {
     return await this.repository.findOne({ where: { product_id: id } });
   }
 
-  async uploadFile(
-    id: number,
-    fileBuffer: Buffer,
-    fileName: string
-  ): Promise<void> {}
+  async addProduct(product: Product): Promise<number> {
+    const savedProduct = await this.repository.save(product);
+    return savedProduct.product_id;
+  }
 }

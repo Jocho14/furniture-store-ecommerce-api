@@ -9,9 +9,16 @@ import { Product } from "../products/product.entity";
 
 @Entity("images")
 export class Image {
-  constructor(product_id: number, url: string) {
+  constructor(
+    product_id: number,
+    url: string,
+    alt?: string,
+    is_thumbnail?: boolean
+  ) {
     this.product_id = product_id;
     this.url = url;
+    this.alt = alt || "image_alt";
+    if (is_thumbnail) this.is_thumbnail = is_thumbnail;
   }
 
   @PrimaryGeneratedColumn({ name: "image_id" })
