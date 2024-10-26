@@ -3,7 +3,8 @@ import { ProductRepository } from "./product.repository";
 import { Product } from "./product.entity";
 import { AddProductResponse } from "./responseType";
 import { ImageService } from "../images/image.service";
-import { DetailedProductDto } from "./DTO/detailedProduct.dto";
+import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
+import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { ImageDto } from "../images/DTO/image.dto";
 
 @Injectable()
@@ -32,8 +33,17 @@ export class ProductService {
     return productsWithThumbnails;
   }
 
-  async getById(id: number): Promise<Product | null> {
-    return await this.productRepository.getById(id);
+  async getById(id: number): Promise<DetailProductClientDto | null> {
+    const product = await this.productRepository.getById(id);
+    const imageUrls = await this.imageService.getImagesForProduct(id);
+    const detailProductClientDto = {
+      name: product?.name || "null",
+      price: product?.price || 0,
+      description: product?.description || "null",
+      imageUrls: imageUrls?.map((image) => image.url) || [],
+    };
+
+    return detailProductClientDto;
   }
 
   async uploadFiles(
@@ -45,19 +55,25 @@ export class ProductService {
   }
 
   async addProduct(
-    detailedProductDto: DetailedProductDto
+    detailProductEmployeeDto: DetailProductEmployeeDto
   ): Promise<AddProductResponse> {
     try {
       const product = new Product(
-        detailedProductDto.details.name,
-        detailedProductDto.details.price,
-        detailedProductDto.details.description
+        detailProductEmployeeDto.name,
+        detailProductEmployeeDto.price,
+        detailProductEmployeeDto.description
       );
       const productId = await this.productRepository.addProduct(product);
-      const imageDto = new ImageDto(productId, detailedProductDto.images);
+      const imageDto = new ImageDto(productId, detailProductEmployeeDto.images);
       const images = await this.imageService.uploadImages(imageDto);
 
-      return { name: product.name, thumbnailUrl: images?.at(0) || "null" };
+      const listProudctDto = {
+        name: detailProductEmployeeDto.name,
+        price: detailProductEmployeeDto.price,
+        thumbnailUrl: images?.at(0) || "null",
+      };
+
+      return listProudctDto;
     } catch (error) {
       return { error: "An error occurred" };
     }

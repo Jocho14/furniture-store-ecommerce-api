@@ -1,3 +1,3 @@
-import { ProductWithThumbnailDto } from "./DTO/productWithThumbnail.dto";
+import { PreviewProductDto } from "./DTO/previewProduct.dto";
 
-export type AddProductResponse = ProductWithThumbnailDto | { error: string };
+export type AddProductResponse = PreviewProductDto | { error: string };

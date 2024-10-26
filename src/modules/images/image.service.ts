@@ -52,4 +52,8 @@ export class ImageService {
   async getThumbnailForProduct(productId: number): Promise<Image | null> {
     return await this.imageRepository.getThumbnail(productId);
   }
+
+  async getImagesForProduct(productId: number): Promise<Image[]> {
+    return await this.imageRepository.getImages(productId);
+  }
 }

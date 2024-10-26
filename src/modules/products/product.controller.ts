@@ -7,13 +7,13 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
-  Headers,
 } from "@nestjs/common";
 import {
   FileInterceptor,
   FileFieldsInterceptor,
 } from "@nestjs/platform-express";
-import { DetailedProductDto } from "./DTO/detailedProduct.dto";
+import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
+import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { AddProductResponse } from "./responseType";
 import { ProductService } from "./product.service";
 import { Product } from "./product.entity";
@@ -28,7 +28,9 @@ export class ProductController {
   }
 
   @Get(":id")
-  async getById(@Param("id") id: number): Promise<Product | null> {
+  async getById(
+    @Param("id") id: number
+  ): Promise<DetailProductClientDto | null> {
     return await this.productService.getById(id);
   }
 
@@ -48,13 +50,11 @@ export class ProductController {
     @UploadedFiles() files: { images?: Express.Multer.File[] },
     @Body() body: any
   ): Promise<AddProductResponse> {
-    const detailedProductDto: DetailedProductDto = {
+    const detailedProductDto: DetailProductEmployeeDto = {
+      name: body.name,
+      price: parseFloat(body.price),
       images: files.images || [],
-      details: {
-        name: body.details.name,
-        price: parseFloat(body.details.price),
-        description: body.details.description,
-      },
+      description: body.description,
       quantity: parseInt(body.quantity, 10),
     };
 

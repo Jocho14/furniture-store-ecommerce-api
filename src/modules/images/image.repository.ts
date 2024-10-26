@@ -21,4 +21,10 @@ export class ImageRepository {
       where: { product: { product_id: productId }, is_thumbnail: true },
     });
   }
+
+  async getImages(productId: number): Promise<Image[]> {
+    return await this.repository.find({
+      where: { product: { product_id: productId } },
+    });
+  }
 }
