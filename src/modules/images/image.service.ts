@@ -56,4 +56,8 @@ export class ImageService {
   async getImagesForProduct(productId: number): Promise<Image[]> {
     return await this.imageRepository.getImages(productId);
   }
+
+  async getImageUrlsForProduct(productId: number): Promise<string[]> {
+    return await this.imageRepository.getImageUrls(productId);
+  }
 }

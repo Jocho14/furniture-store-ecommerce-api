@@ -16,6 +16,7 @@ import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
 import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
 import { PreviewProductDto } from "./DTO/previewProduct.dto";
+import { PaymentProductDto } from "./DTO/paymentProduct.dto";
 import { AddProductResponse } from "./responseType";
 import { ProductService } from "./product.service";
 import { Product } from "./product.entity";
@@ -75,5 +76,12 @@ export class ProductController {
     };
 
     return await this.productService.addProduct(detailedProductDto);
+  }
+
+  @Post("payment-details")
+  async getPaymentDetails(
+    @Body("ids") ids: number[]
+  ): Promise<PaymentProductDto[]> {
+    return await this.productService.getPaymentDetails(ids);
   }
 }

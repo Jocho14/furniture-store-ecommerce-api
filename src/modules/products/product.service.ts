@@ -1,14 +1,20 @@
 import { Injectable } from "@nestjs/common";
-import { ProductRepository } from "./product.repository";
+
 import { Product } from "./product.entity";
+
+import { ProductRepository } from "./product.repository";
+
 import { AddProductResponse } from "./responseType";
+
 import { ImageService } from "../images/image.service";
 import { ProductWarehouseService } from "../products-warehouses/product-warehouse.service";
-import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
-import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
-import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
-import { PreviewProductDto } from "./DTO/previewProduct.dto";
+
 import { ImageDto } from "../images/DTO/image.dto";
+import { PreviewProductDto } from "./DTO/previewProduct.dto";
+import { PaymentProductDto } from "./DTO/paymentProduct.dto";
+import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
+import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
+import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
 
 @Injectable()
 export class ProductService {
@@ -133,5 +139,26 @@ export class ProductService {
     } catch (error) {
       return { error: "An error occurred" };
     }
+  }
+
+  async getPaymentDetails(ids: number[]): Promise<PaymentProductDto[]> {
+    const products = await this.productRepository.getByIds(ids);
+    if (!products) {
+      return [];
+    }
+    const paymentDetails = await Promise.all(
+      products.map(async (product) => {
+        const imageUrls = await this.imageService.getImageUrlsForProduct(
+          product.product_id
+        );
+        return {
+          productId: product.product_id,
+          name: product.name,
+          price: product.price,
+          imageUrls: imageUrls || [],
+        };
+      })
+    );
+    return paymentDetails;
   }
 }
