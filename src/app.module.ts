@@ -3,6 +3,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { AccountModule } from "./modules/accounts/account.module";
 import { ProductModule } from "./modules/products/product.module";
+import { WarehouseModule } from "./modules/warehouses/warehouse.module";
+import { ProductWarehouseModule } from "./modules/products-warehouses/product-warehouse.module";
 
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -21,6 +23,8 @@ dotenv.config();
     }),
     AccountModule,
     ProductModule,
+    WarehouseModule,
+    ProductWarehouseModule,
   ],
 })
 export class AppModule {}

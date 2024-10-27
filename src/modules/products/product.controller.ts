@@ -14,6 +14,8 @@ import {
 } from "@nestjs/platform-express";
 import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
 import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
+import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
+import { PreviewProductDto } from "./DTO/previewProduct.dto";
 import { AddProductResponse } from "./responseType";
 import { ProductService } from "./product.service";
 import { Product } from "./product.entity";
@@ -25,6 +27,20 @@ export class ProductController {
   @Get("all-with-thumbnails")
   async getAllWithThumbnails(): Promise<Product[]> {
     return await this.productService.getAllWithThumbnails();
+  }
+
+  @Post("extended-previews")
+  async getExtendedPreviewsByIds(
+    @Body("ids") ids: number[]
+  ): Promise<ExtendedPreviewProductDto[]> {
+    return await this.productService.getExtendedPreviews(ids);
+  }
+
+  @Post("previews")
+  async getPreviewsByIds(
+    @Body("ids") ids: number[]
+  ): Promise<PreviewProductDto[]> {
+    return await this.productService.getPreviews(ids);
   }
 
   @Get(":id")

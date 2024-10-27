@@ -3,15 +3,19 @@ import { ProductRepository } from "./product.repository";
 import { Product } from "./product.entity";
 import { AddProductResponse } from "./responseType";
 import { ImageService } from "../images/image.service";
+import { ProductWarehouseService } from "../products-warehouses/product-warehouse.service";
 import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
 import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
+import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
+import { PreviewProductDto } from "./DTO/previewProduct.dto";
 import { ImageDto } from "../images/DTO/image.dto";
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
-    private readonly imageService: ImageService
+    private readonly imageService: ImageService,
+    private readonly productWarehouseService: ProductWarehouseService
   ) {}
 
   async getAllWithThumbnails(): Promise<any> {
@@ -46,6 +50,54 @@ export class ProductService {
     return detailProductClientDto;
   }
 
+  async getExtendedPreviews(
+    ids: number[]
+  ): Promise<ExtendedPreviewProductDto[]> {
+    const products = await this.productRepository.getByIds(ids);
+    if (!products) {
+      return [];
+    }
+    const extendedPreviews = await Promise.all(
+      products.map(async (product) => {
+        const thumbnail = await this.imageService.getThumbnailForProduct(
+          product.product_id
+        );
+        const quantity = await this.productWarehouseService.getQuantity(
+          product.product_id
+        );
+        return {
+          productId: product.product_id,
+          name: product.name,
+          price: product.price,
+          thumbnailUrl: thumbnail?.url || "null",
+          quantity: quantity || 0,
+        };
+      })
+    );
+    return extendedPreviews;
+  }
+
+  async getPreviews(ids: number[]): Promise<PreviewProductDto[]> {
+    const products = await this.productRepository.getByIds(ids);
+    if (!products) {
+      return [];
+    }
+    const previews = await Promise.all(
+      products.map(async (product) => {
+        const thumbnail = await this.imageService.getThumbnailForProduct(
+          product.product_id
+        );
+        return {
+          productId: product.product_id,
+          name: product.name,
+          price: product.price,
+          thumbnailUrl: thumbnail?.url || "null",
+        };
+      })
+    );
+    return previews;
+  }
+
   async uploadFiles(
     id: number,
     files: Express.Multer.File[]
@@ -64,6 +116,10 @@ export class ProductService {
         detailProductEmployeeDto.description
       );
       const productId = await this.productRepository.addProduct(product);
+      await this.productWarehouseService.setQuantity(
+        productId,
+        detailProductEmployeeDto.quantity
+      );
       const imageDto = new ImageDto(productId, detailProductEmployeeDto.images);
       const images = await this.imageService.uploadImages(imageDto);
 

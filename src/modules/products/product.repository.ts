@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Repository, In } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 
@@ -13,6 +13,12 @@ export class ProductRepository {
 
   async getAll(): Promise<Product[]> {
     return await this.repository.find();
+  }
+
+  async getByIds(ids: number[]): Promise<Product[] | null> {
+    return await this.repository.find({
+      where: { product_id: In(ids) },
+    });
   }
 
   async getById(id: number): Promise<Product | null> {
