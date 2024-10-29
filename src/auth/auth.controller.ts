@@ -1,30 +1,36 @@
-import { Controller, Post, Body, HttpException } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  HttpException,
+  UseGuards,
+  Get,
+  Req,
+} from "@nestjs/common";
 
 import { AuthService } from "./auth.service";
 import { AuthStatus } from "./enum/authStatus";
 import { HttpStatus } from "@nestjs/common";
 import { LoginPayloadDto } from "./DTO/login.dto";
+import { AuthGuard } from "@nestjs/passport";
+import { LocalGuard } from "./guards/local.guard";
+import { JwtGuard } from "./guards/jwt.guard";
+import { Request } from "express";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("login")
-  async login(@Body() loginPayload: LoginPayloadDto) {
-    const authResponse = await this.authService.validateUser(loginPayload);
+  @UseGuards(LocalGuard)
+  async login(@Req() req: Request) {
+    return req.user;
+  }
 
-    switch (authResponse.status) {
-      case AuthStatus.USER_NOT_FOUND:
-        throw new HttpException(authResponse.message, HttpStatus.NOT_FOUND);
-      case AuthStatus.INCORRECT_PASSWORD:
-        throw new HttpException(authResponse.message, HttpStatus.UNAUTHORIZED);
-      case AuthStatus.SUCCESS:
-        return { token: authResponse.token };
-      default:
-        throw new HttpException(
-          "Unexpected error",
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-    }
+  @Get("status")
+  @UseGuards(JwtGuard)
+  async status(@Req() req: Request) {
+    console.log("inside auth controller status");
+    console.log(req.user);
   }
 }

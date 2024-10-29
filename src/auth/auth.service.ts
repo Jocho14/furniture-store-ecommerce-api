@@ -15,7 +15,6 @@ export class AuthService {
 
   async validateUser(loginPayload: LoginPayloadDto): Promise<AuthResponse> {
     const findUser = await this.accountService.findByEmail(loginPayload.email);
-
     if (!findUser) {
       return { status: AuthStatus.USER_NOT_FOUND, message: "User not found" };
     }
