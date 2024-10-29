@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { AuthModule } from "./auth/auth.module";
 import { AccountModule } from "./modules/accounts/account.module";
 import { ProductModule } from "./modules/products/product.module";
 import { WarehouseModule } from "./modules/warehouses/warehouse.module";
@@ -21,6 +22,7 @@ dotenv.config();
       entities: [__dirname + "/**/*.entity{.ts,.js}"],
       synchronize: false, // set to false in production
     }),
+    AuthModule,
     AccountModule,
     ProductModule,
     WarehouseModule,

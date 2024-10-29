@@ -9,5 +9,6 @@ import { AccountRepository } from "./account.repository";
   imports: [TypeOrmModule.forFeature([Account])],
   providers: [AccountService, AccountRepository],
   controllers: [AccountController],
+  exports: [AccountService],
 })
 export class AccountModule {}

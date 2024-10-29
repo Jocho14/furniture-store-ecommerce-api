@@ -4,17 +4,22 @@ import { Account } from "./account.entity";
 
 @Injectable()
 export class AccountService {
-  constructor(private readonly AccountRepository: AccountRepository) {}
+  constructor(private readonly accountRepository: AccountRepository) {}
 
-  findAll(): Promise<Account[]> {
-    return this.AccountRepository.findAll();
+  async findAll(): Promise<Account[]> {
+    return await this.accountRepository.findAll();
   }
 
-  findByEmail(email: string): Promise<Account | null> {
-    return this.AccountRepository.findByEmail(email);
+  async findByEmail(email: string): Promise<Account | null> {
+    return await this.accountRepository.findByEmail(email);
   }
 
-  create(account: Account): Promise<Account> {
-    return this.AccountRepository.createAccount(account);
+  async getPasswordHashForEmail(email: string): Promise<string | null> {
+    const account = await this.accountRepository.getPasswordHashForEmail(email);
+    return account ? account.password_hash : null;
+  }
+
+  async create(account: Account): Promise<Account> {
+    return await this.accountRepository.createAccount(account);
   }
 }

@@ -12,14 +12,18 @@ export class AccountRepository {
   ) {}
 
   async findByEmail(email: string): Promise<Account | null> {
-    return this.repository.findOne({ where: { email } });
+    return await this.repository.findOne({ where: { email } });
+  }
+
+  async getPasswordHashForEmail(email: string): Promise<Account | null> {
+    return await this.repository.findOne({ where: { email: email } });
   }
 
   async findAll(): Promise<Account[]> {
-    return this.repository.find();
+    return await this.repository.find();
   }
 
   async createAccount(account: Account): Promise<Account> {
-    return this.repository.save(account);
+    return await this.repository.save(account);
   }
 }
