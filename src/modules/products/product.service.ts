@@ -32,6 +32,7 @@ export class ProductService {
           product.product_id
         );
         return {
+          id: product.product_id,
           name: product.name,
           price: product.price,
           thumbnail: thumbnail?.url || "null",
@@ -126,7 +127,10 @@ export class ProductService {
         productId,
         detailProductEmployeeDto.quantity
       );
-      const imageDto = new ImageDto(productId, detailProductEmployeeDto.images);
+      const imageFiles =
+        detailProductEmployeeDto.images as Express.Multer.File[];
+
+      const imageDto = new ImageDto(productId, imageFiles);
       const images = await this.imageService.uploadImages(imageDto);
 
       const listProudctDto = {
@@ -160,5 +164,48 @@ export class ProductService {
       })
     );
     return paymentDetails;
+  }
+
+  async getManagedDetails(
+    productId: number
+  ): Promise<DetailProductEmployeeDto | null> {
+    const product = await this.productRepository.getById(productId);
+    if (!product) {
+      return null;
+    }
+    const imageFiles = await this.imageService.getImageUrlsForProduct(
+      productId
+    );
+    const quantity = await this.productWarehouseService.getQuantity(productId);
+    const detailProductEmployeeDto = {
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      quantity: quantity || 0,
+      images: imageFiles || [],
+    };
+
+    return detailProductEmployeeDto;
+  }
+
+  async manageProduct(productId: number, body: DetailProductEmployeeDto) {
+    const product = await this.productRepository.getById(productId);
+    if (!product) {
+      return null;
+    }
+
+    if (body.name) {
+      product.name = body.name;
+    }
+    if (body.price) {
+      product.price = body.price;
+    }
+    if (body.description) {
+      product.description = body.description;
+    }
+
+    //await this.productRepository.updateProduct(product);
+
+    return product;
   }
 }

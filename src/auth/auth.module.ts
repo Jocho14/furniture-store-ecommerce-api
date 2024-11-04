@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
 
@@ -14,7 +14,7 @@ dotenv.config();
 @Module({
   imports: [
     PassportModule,
-    AccountModule,
+    forwardRef(() => AccountModule),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "1h" },
@@ -22,5 +22,6 @@ dotenv.config();
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,13 +1,14 @@
+import * as dotenv from "dotenv";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
+import { UserModule } from "./modules/users/user.module";
 import { AuthModule } from "./auth/auth.module";
 import { AccountModule } from "./modules/accounts/account.module";
 import { ProductModule } from "./modules/products/product.module";
 import { WarehouseModule } from "./modules/warehouses/warehouse.module";
 import { ProductWarehouseModule } from "./modules/products-warehouses/product-warehouse.module";
 
-import * as dotenv from "dotenv";
 dotenv.config();
 
 @Module({
@@ -27,6 +28,7 @@ dotenv.config();
     ProductModule,
     WarehouseModule,
     ProductWarehouseModule,
+    UserModule,
   ],
 })
 export class AppModule {}

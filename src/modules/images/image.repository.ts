@@ -35,4 +35,8 @@ export class ImageRepository {
 
     return images.map((image) => image.url);
   }
+
+  async deleteAll(productId: number): Promise<void> {
+    await this.repository.delete({ product: { product_id: productId } });
+  }
 }

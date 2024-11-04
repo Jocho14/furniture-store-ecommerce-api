@@ -10,6 +10,12 @@ import { User } from "../users/user.entity";
 
 @Entity("accounts")
 export class Account {
+  constructor(userId: number, email: string, password: string) {
+    this.user_id = userId;
+    this.email = email;
+    this.password_hash = password;
+  }
+
   @PrimaryGeneratedColumn()
   account_id!: number;
 

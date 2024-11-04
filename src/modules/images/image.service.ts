@@ -1,5 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { ref, listAll, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  listAll,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 
 import { firestoreConfig, firestoreDb, storage } from "../../firebase";
 
@@ -12,34 +18,50 @@ export class ImageService {
   constructor(private readonly imageRepository: ImageRepository) {}
 
   async uploadImages(imageDto: ImageDto): Promise<string[] | undefined> {
-    const downloadUrls: string[] = await Promise.all(
-      imageDto.files.map(async (file, index) => {
-        const storageRef = ref(
-          storage,
-          firestoreConfig.storagePaths.productImage(
-            imageDto.productId,
-            `${imageDto.productId.toString()}_${index}`
-          )
-        );
+    const downloadUrls: string[] = [];
 
-        const blob = new Blob([file.buffer], { type: file.mimetype });
-        const uploadResult = await uploadBytes(storageRef, blob);
-        const downloadUrl = await getDownloadURL(uploadResult.ref);
-
-        const image = new Image(
+    for (const [index, file] of imageDto.files.entries()) {
+      const storageRef = ref(
+        storage,
+        firestoreConfig.storagePaths.productImage(
           imageDto.productId,
-          downloadUrl,
-          file.filename,
-          index === 0
-        );
+          `${imageDto.productId.toString()}_${index}`
+        )
+      );
 
-        await this.imageRepository.save(image);
+      const blob = new Blob([file.buffer], { type: file.mimetype });
+      const uploadResult = await uploadBytes(storageRef, blob);
+      const downloadUrl = await getDownloadURL(uploadResult.ref);
 
-        return downloadUrl;
-      })
-    );
+      const image = new Image(
+        imageDto.productId,
+        downloadUrl,
+        file.filename,
+        index === 0
+      );
+
+      await this.imageRepository.save(image);
+
+      downloadUrls.push(downloadUrl);
+    }
 
     return downloadUrls;
+  }
+
+  async deleteAllImages(productId: number): Promise<void> {
+    const storageRef = ref(
+      storage,
+      firestoreConfig.storagePaths.allProductsImages(productId.toString())
+    );
+
+    const listResult = await listAll(storageRef);
+
+    const deletePromises = listResult.items.map((itemRef) =>
+      deleteObject(itemRef)
+    );
+    await Promise.all(deletePromises);
+
+    await this.imageRepository.deleteAll(productId);
   }
 
   async getAllImageNames(productId: string): Promise<string> {
@@ -59,5 +81,25 @@ export class ImageService {
 
   async getImageUrlsForProduct(productId: number): Promise<string[]> {
     return await this.imageRepository.getImageUrls(productId);
+  }
+
+  async urlToFile(
+    url: string,
+    filename: string,
+    mimeType: string
+  ): Promise<File> {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], filename, { type: mimeType });
+  }
+
+  async getImageFilesForProduct(productId: number): Promise<File[]> {
+    const imageUrls = await this.getImageUrlsForProduct(productId);
+    const filePromises = imageUrls.map(async (url, index) => {
+      const filename = `image_${index}`;
+      const mimeType = "image/webp";
+      return await this.urlToFile(url, filename, mimeType);
+    });
+    return await Promise.all(filePromises);
   }
 }

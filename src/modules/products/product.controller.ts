@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Body,
   Param,
   UseInterceptors,
@@ -83,5 +84,20 @@ export class ProductController {
     @Body("ids") ids: number[]
   ): Promise<PaymentProductDto[]> {
     return await this.productService.getPaymentDetails(ids);
+  }
+
+  @Get(":id/managed-details")
+  async getManagedDetails(
+    @Param("id") id: number
+  ): Promise<DetailProductEmployeeDto | null> {
+    return await this.productService.getManagedDetails(id);
+  }
+
+  @Put("update")
+  async manageProduct(
+    @Param("id") id: number,
+    @Body() body: DetailProductEmployeeDto
+  ): Promise<Product | null> {
+    return await this.productService.manageProduct(id, body);
   }
 }
