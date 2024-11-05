@@ -35,4 +35,15 @@ export class ProductWarehouseRepository {
     await this.repository.save(productWarehouse);
     return quantity;
   }
+
+  async updateQuantity(
+    productId: number,
+    quantity: number
+  ): Promise<number | null> {
+    await this.repository.update(
+      { product_id: productId, warehouse_id: 1 },
+      { quantity }
+    );
+    return quantity;
+  }
 }

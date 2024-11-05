@@ -31,12 +31,16 @@ export class ProductService {
         const thumbnail = await this.imageService.getThumbnailForProduct(
           product.product_id
         );
+        const quantity = await this.productWarehouseService.getQuantity(
+          product.product_id
+        );
         return {
           id: product.product_id,
           name: product.name,
           price: product.price,
           thumbnail: thumbnail?.url || "null",
           alt: thumbnail?.alt || "null",
+          quantity: quantity || 0,
         };
       })
     );
@@ -188,23 +192,31 @@ export class ProductService {
     return detailProductEmployeeDto;
   }
 
-  async manageProduct(productId: number, body: DetailProductEmployeeDto) {
-    const product = await this.productRepository.getById(productId);
-    if (!product) {
-      return null;
-    }
+  async updateProduct(
+    productId: number,
+    detailedProductDto: DetailProductEmployeeDto
+  ) {
+    const product = new Product(
+      detailedProductDto.name,
+      detailedProductDto.price,
+      detailedProductDto.description
+    );
 
-    if (body.name) {
-      product.name = body.name;
-    }
-    if (body.price) {
-      product.price = body.price;
-    }
-    if (body.description) {
-      product.description = body.description;
-    }
+    product.product_id = productId;
 
-    //await this.productRepository.updateProduct(product);
+    await this.imageService.deleteAllImages(productId);
+    await this.imageService.uploadImages(
+      new ImageDto(
+        productId,
+        detailedProductDto.images as Express.Multer.File[]
+      )
+    );
+    await this.productWarehouseService.updateQuantity(
+      productId,
+      detailedProductDto.quantity
+    );
+
+    await this.productRepository.updateProduct(product);
 
     return product;
   }

@@ -27,7 +27,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get("all-with-thumbnails")
-  async getAllWithThumbnails(): Promise<Product[]> {
+  async getAllWithThumbnails(): Promise<any[]> {
     return await this.productService.getAllWithThumbnails();
   }
 
@@ -93,11 +93,20 @@ export class ProductController {
     return await this.productService.getManagedDetails(id);
   }
 
-  @Put("update")
-  async manageProduct(
+  @Put(":id/update")
+  @UseInterceptors(FileFieldsInterceptor([{ name: "images", maxCount: 10 }]))
+  async updateProduct(
+    @UploadedFiles() files: { images?: Express.Multer.File[] },
     @Param("id") id: number,
-    @Body() body: DetailProductEmployeeDto
+    @Body() body: any
   ): Promise<Product | null> {
-    return await this.productService.manageProduct(id, body);
+    const detailedProductDto: DetailProductEmployeeDto = {
+      name: body.name,
+      price: parseFloat(body.price),
+      images: files.images || [],
+      description: body.description,
+      quantity: parseInt(body.quantity, 10),
+    };
+    return await this.productService.updateProduct(id, detailedProductDto);
   }
 }

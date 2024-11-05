@@ -34,6 +34,13 @@ export class ProductWarehouseService {
     await this.productWarehouseRepository.setQuantity(productId, quantity);
   }
 
+  async updateQuantity(productId: number, quantity: number): Promise<void> {
+    if (quantity < 0) {
+      throw new Error("Quantity cannot be negative");
+    }
+    await this.productWarehouseRepository.updateQuantity(productId, quantity);
+  }
+
   async increaseQuantity(productId: number, quantity: number): Promise<void> {
     const currentQuantity = await this.getQuantity(productId);
     await this.setQuantity(productId, currentQuantity + quantity);

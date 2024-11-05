@@ -29,4 +29,12 @@ export class ProductRepository {
     const savedProduct = await this.repository.save(product);
     return savedProduct.product_id;
   }
+
+  async updateProduct(product: Product): Promise<void> {
+    await this.repository.update(product.product_id, {
+      name: product.name,
+      price: product.price,
+      description: product.description,
+    });
+  }
 }
