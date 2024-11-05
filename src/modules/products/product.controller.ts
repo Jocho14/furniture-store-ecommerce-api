@@ -13,14 +13,20 @@ import {
   FileInterceptor,
   FileFieldsInterceptor,
 } from "@nestjs/platform-express";
+
 import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
 import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
 import { PreviewProductDto } from "./DTO/previewProduct.dto";
 import { PaymentProductDto } from "./DTO/paymentProduct.dto";
-import { AddProductResponse } from "./responseType";
+
+import {
+  AddProductResponse,
+  UpdateProductResponse,
+  DeactivateProductResponse,
+} from "./responseType";
+
 import { ProductService } from "./product.service";
-import { Product } from "./product.entity";
 
 @Controller("Products")
 export class ProductController {
@@ -45,7 +51,7 @@ export class ProductController {
     return await this.productService.getPreviews(ids);
   }
 
-  @Get(":id")
+  @Get(":id/details/client")
   async getById(
     @Param("id") id: number
   ): Promise<DetailProductClientDto | null> {
@@ -64,7 +70,7 @@ export class ProductController {
 
   @Post("add")
   @UseInterceptors(FileFieldsInterceptor([{ name: "images", maxCount: 10 }]))
-  async addProduct(
+  async add(
     @UploadedFiles() files: { images?: Express.Multer.File[] },
     @Body() body: any
   ): Promise<AddProductResponse> {
@@ -76,7 +82,7 @@ export class ProductController {
       quantity: parseInt(body.quantity, 10),
     };
 
-    return await this.productService.addProduct(detailedProductDto);
+    return await this.productService.add(detailedProductDto);
   }
 
   @Post("payment-details")
@@ -86,7 +92,7 @@ export class ProductController {
     return await this.productService.getPaymentDetails(ids);
   }
 
-  @Get(":id/managed-details")
+  @Get(":id/details/employee")
   async getManagedDetails(
     @Param("id") id: number
   ): Promise<DetailProductEmployeeDto | null> {
@@ -95,11 +101,11 @@ export class ProductController {
 
   @Put(":id/update")
   @UseInterceptors(FileFieldsInterceptor([{ name: "images", maxCount: 10 }]))
-  async updateProduct(
+  async update(
     @UploadedFiles() files: { images?: Express.Multer.File[] },
     @Param("id") id: number,
     @Body() body: any
-  ): Promise<Product | null> {
+  ): Promise<UpdateProductResponse> {
     const detailedProductDto: DetailProductEmployeeDto = {
       name: body.name,
       price: parseFloat(body.price),
@@ -107,6 +113,14 @@ export class ProductController {
       description: body.description,
       quantity: parseInt(body.quantity, 10),
     };
-    return await this.productService.updateProduct(id, detailedProductDto);
+
+    return await this.productService.update(id, detailedProductDto);
+  }
+
+  @Put(":id/deactivate")
+  async deactivate(
+    @Param("id") id: number
+  ): Promise<DeactivateProductResponse> {
+    return await this.productService.deactivate(id);
   }
 }

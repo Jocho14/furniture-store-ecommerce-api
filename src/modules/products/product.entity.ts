@@ -28,6 +28,9 @@ export class Product {
   @Column({ type: "text" })
   description!: string;
 
+  @Column({ type: "boolean", default: true })
+  is_active!: boolean;
+
   @OneToMany(() => Image, (image) => image.product, { cascade: true })
   images!: Image[];
 

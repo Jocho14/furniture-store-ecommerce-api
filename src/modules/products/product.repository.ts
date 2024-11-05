@@ -12,7 +12,9 @@ export class ProductRepository {
   ) {}
 
   async getAll(): Promise<Product[]> {
-    return await this.repository.find();
+    return await this.repository.find({
+      where: { is_active: true },
+    });
   }
 
   async getByIds(ids: number[]): Promise<Product[] | null> {
@@ -25,16 +27,20 @@ export class ProductRepository {
     return await this.repository.findOne({ where: { product_id: id } });
   }
 
-  async addProduct(product: Product): Promise<number> {
+  async add(product: Product): Promise<number> {
     const savedProduct = await this.repository.save(product);
     return savedProduct.product_id;
   }
 
-  async updateProduct(product: Product): Promise<void> {
+  async update(product: Product): Promise<void> {
     await this.repository.update(product.product_id, {
       name: product.name,
       price: product.price,
       description: product.description,
     });
+  }
+
+  async deactivate(id: number): Promise<void> {
+    await this.repository.update(id, { is_active: false });
   }
 }

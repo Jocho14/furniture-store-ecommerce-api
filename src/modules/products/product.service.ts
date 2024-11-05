@@ -4,7 +4,11 @@ import { Product } from "./product.entity";
 
 import { ProductRepository } from "./product.repository";
 
-import { AddProductResponse } from "./responseType";
+import {
+  AddProductResponse,
+  UpdateProductResponse,
+  DeactivateProductResponse,
+} from "./responseType";
 
 import { ImageService } from "../images/image.service";
 import { ProductWarehouseService } from "../products-warehouses/product-warehouse.service";
@@ -117,7 +121,7 @@ export class ProductService {
     return await this.imageService.uploadImages(imageDto);
   }
 
-  async addProduct(
+  async add(
     detailProductEmployeeDto: DetailProductEmployeeDto
   ): Promise<AddProductResponse> {
     try {
@@ -126,7 +130,7 @@ export class ProductService {
         detailProductEmployeeDto.price,
         detailProductEmployeeDto.description
       );
-      const productId = await this.productRepository.addProduct(product);
+      const productId = await this.productRepository.add(product);
       await this.productWarehouseService.setQuantity(
         productId,
         detailProductEmployeeDto.quantity
@@ -192,32 +196,62 @@ export class ProductService {
     return detailProductEmployeeDto;
   }
 
-  async updateProduct(
+  async update(
     productId: number,
     detailedProductDto: DetailProductEmployeeDto
-  ) {
-    const product = new Product(
-      detailedProductDto.name,
-      detailedProductDto.price,
-      detailedProductDto.description
-    );
+  ): Promise<UpdateProductResponse> {
+    try {
+      const product = new Product(
+        detailedProductDto.name,
+        detailedProductDto.price,
+        detailedProductDto.description
+      );
 
-    product.product_id = productId;
+      product.product_id = productId;
 
-    await this.imageService.deleteAllImages(productId);
-    await this.imageService.uploadImages(
-      new ImageDto(
+      await this.imageService.deleteAllImages(productId);
+      const images = await this.imageService.uploadImages(
+        new ImageDto(
+          productId,
+          detailedProductDto.images as Express.Multer.File[]
+        )
+      );
+      await this.productWarehouseService.updateQuantity(
         productId,
-        detailedProductDto.images as Express.Multer.File[]
-      )
-    );
-    await this.productWarehouseService.updateQuantity(
-      productId,
-      detailedProductDto.quantity
-    );
+        detailedProductDto.quantity
+      );
 
-    await this.productRepository.updateProduct(product);
+      await this.productRepository.update(product);
 
-    return product;
+      const listProudctDto = {
+        name: detailedProductDto.name,
+        price: detailedProductDto.price,
+        thumbnailUrl: images?.at(0) || "null",
+      };
+
+      return listProudctDto;
+    } catch (error) {
+      return { error: "An error occurred" };
+    }
+  }
+
+  async deactivate(productId: number): Promise<DeactivateProductResponse> {
+    try {
+      await this.productWarehouseService.updateQuantity(productId, 0);
+      await this.productRepository.deactivate(productId);
+      const product = await this.productRepository.getById(productId);
+      const thumbnail = await this.imageService.getThumbnailForProduct(
+        productId
+      );
+
+      const listProudctDto = {
+        name: product?.name || "null",
+        price: product?.price || 0,
+        thumbnailUrl: thumbnail?.url || "null",
+      };
+      return listProudctDto;
+    } catch (error) {
+      return { error: "An error occurred" };
+    }
   }
 }
