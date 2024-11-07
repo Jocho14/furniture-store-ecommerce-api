@@ -102,4 +102,21 @@ export class ImageService {
     });
     return await Promise.all(filePromises);
   }
+
+  async getMasonryImages(categoryId: number): Promise<string[]> {
+    const storageRef = ref(storage, `images/categories/${categoryId}`);
+    const listResult = await listAll(storageRef);
+    const sortedItems = listResult.items.sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+
+    const downloadUrls = await Promise.all(
+      sortedItems.map(async (itemRef) => {
+        const downloadUrl = await getDownloadURL(itemRef);
+        return downloadUrl;
+      })
+    );
+
+    return downloadUrls;
+  }
 }

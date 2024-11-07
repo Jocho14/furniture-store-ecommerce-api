@@ -8,6 +8,7 @@ import { AccountModule } from "./modules/accounts/account.module";
 import { ProductModule } from "./modules/products/product.module";
 import { WarehouseModule } from "./modules/warehouses/warehouse.module";
 import { ProductWarehouseModule } from "./modules/products-warehouses/product-warehouse.module";
+import { CategoryModule } from "./modules/categories/category.module";
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ dotenv.config();
     WarehouseModule,
     ProductWarehouseModule,
     UserModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}

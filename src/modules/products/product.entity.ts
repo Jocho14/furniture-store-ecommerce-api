@@ -6,6 +6,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { Image } from "../images/image.entity";
+import { Category } from "../categories/category.entity";
 import { ProductWarehouse } from "../products-warehouses/product-warehouse.entity";
 
 @Entity("products")
@@ -33,6 +34,9 @@ export class Product {
 
   @OneToMany(() => Image, (image) => image.product, { cascade: true })
   images!: Image[];
+
+  @OneToMany(() => Category, (category) => category.product, { cascade: true })
+  categories!: Category[];
 
   @OneToMany(
     () => ProductWarehouse,
