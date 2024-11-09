@@ -19,13 +19,19 @@ import { PaymentProductDto } from "./DTO/paymentProduct.dto";
 import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { DetailProductEmployeeDto } from "./DTO/detailProductEmployee.dto";
 import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
+import { ReviewService } from "../reviews/review.service";
+import { GetReviewDto } from "../reviews/DTO/getReview.dto";
+import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
+import { UserService } from "../users/user.service";
 
 @Injectable()
 export class ProductService {
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly imageService: ImageService,
-    private readonly productWarehouseService: ProductWarehouseService
+    private readonly productWarehouseService: ProductWarehouseService,
+    private readonly reviewService: ReviewService,
+    private readonly userService: UserService
   ) {}
 
   async getAllWithThumbnails(): Promise<any> {
@@ -253,5 +259,19 @@ export class ProductService {
     } catch (error) {
       return { error: "An error occurred" };
     }
+  }
+
+  async getReviews(productId: number): Promise<GetReviewDto[]> {
+    console.log("entered getRevies service, productId: ", productId);
+    return await this.reviewService.getReviewsForProduct(productId);
+  }
+
+  async addReview(
+    productId: number,
+    body: CreateReviewDto,
+    user: any
+  ): Promise<any> {
+    const clientId = await this.userService.getClientId(user.user_id);
+    return await this.reviewService.addReview(productId, body, clientId);
   }
 }

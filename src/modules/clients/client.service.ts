@@ -1,13 +1,28 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject, forwardRef } from "@nestjs/common";
 import { ClientRepository } from "./client.repository";
 import { Client } from "./client.entity";
-import { AccountService } from "../accounts/account.service";
+import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
+
+import { UserService } from "../users/user.service";
 
 @Injectable()
 export class ClientService {
-  constructor(private readonly clientRepository: ClientRepository) {}
+  constructor(
+    private readonly clientRepository: ClientRepository,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService
+  ) {}
 
   async create(client: Client): Promise<any> {
     return await this.clientRepository.createClient(client);
+  }
+
+  async getUserFirstName(id: number): Promise<string | null> {
+    const userId = await this.clientRepository.getUserId(id);
+    return await this.userService.getUserFirstName(userId);
+  }
+
+  async getClientId(userId: number): Promise<number | null> {
+    return await this.clientRepository.getClientId(userId);
   }
 }

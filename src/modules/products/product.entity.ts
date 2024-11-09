@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Image } from "../images/image.entity";
 import { Category } from "../categories/category.entity";
+import { Review } from "../reviews/review.entity";
 import { ProductWarehouse } from "../products-warehouses/product-warehouse.entity";
 
 @Entity("products")
@@ -37,6 +38,9 @@ export class Product {
 
   @OneToMany(() => Category, (category) => category.product, { cascade: true })
   categories!: Category[];
+
+  @OneToMany(() => Review, (review) => review.product, { cascade: true })
+  reviews!: Review[];
 
   @OneToMany(
     () => ProductWarehouse,

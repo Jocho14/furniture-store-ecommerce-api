@@ -7,6 +7,8 @@ import { ProductRepository } from "./product.repository";
 import { ImageModule } from "../images/image.module";
 import { ProductWarehouseModule } from "../products-warehouses/product-warehouse.module";
 import { CategoryModule } from "../categories/category.module";
+import { ReviewModule } from "../reviews/review.module";
+import { UserModule } from "../users/user.module";
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { CategoryModule } from "../categories/category.module";
     ImageModule,
     ProductWarehouseModule,
     CategoryModule,
+    ReviewModule,
+    UserModule,
   ],
   providers: [ProductService, ProductRepository],
   controllers: [ProductController],

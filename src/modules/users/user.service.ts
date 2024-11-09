@@ -40,4 +40,12 @@ export class UserService {
 
     return createUserResponse;
   }
+
+  async getUserFirstName(id: number | null): Promise<string | null> {
+    return await this.userRepository.getFirstName(id);
+  }
+
+  async getClientId(userId: number): Promise<number | null> {
+    return await this.clientService.getClientId(userId);
+  }
 }

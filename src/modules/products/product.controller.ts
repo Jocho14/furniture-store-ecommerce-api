@@ -8,6 +8,8 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Req,
+  UseGuards,
 } from "@nestjs/common";
 import {
   FileInterceptor,
@@ -19,6 +21,10 @@ import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
 import { PreviewProductDto } from "./DTO/previewProduct.dto";
 import { PaymentProductDto } from "./DTO/paymentProduct.dto";
+import { GetReviewDto } from "../reviews/DTO/getReview.dto";
+import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
+import { Request } from "express";
+import { JwtGuard } from "../../auth/guards/jwt.guard";
 
 import {
   AddProductResponse,
@@ -122,5 +128,22 @@ export class ProductController {
     @Param("id") id: number
   ): Promise<DeactivateProductResponse> {
     return await this.productService.deactivate(id);
+  }
+
+  @Get(":id/reviews")
+  async getReviews(@Param("id") id: number): Promise<any[]> {
+    return await this.productService.getReviews(id);
+  }
+
+  @Post(":id/add-review")
+  @UseGuards(JwtGuard)
+  async addReview(
+    @Req() req: Request,
+    @Param("id") productId: number,
+    @Body() body: CreateReviewDto
+  ): Promise<any> {
+    console.log(req.user);
+
+    return await this.productService.addReview(productId, body, req.user);
   }
 }
