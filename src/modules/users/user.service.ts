@@ -6,13 +6,18 @@ import { Account } from "../accounts/account.entity";
 import { AccountService } from "../accounts/account.service";
 import { Client } from "../clients/client.entity";
 import { ClientService } from "../clients/client.service";
+import { EmployeeService } from "../employees/employee.service";
+import { userRole } from "../../auth/enum/userRole";
+import { AccountBasicInfoDto } from "./DTO/accountBasicInfo.dto";
+import { AuthenticatedUser } from "../../auth/interface/IAuth";
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly accountService: AccountService,
-    private readonly clientService: ClientService
+    private readonly clientService: ClientService,
+    private readonly employeeService: EmployeeService
   ) {}
 
   findAll(): Promise<User[]> {
@@ -47,5 +52,29 @@ export class UserService {
 
   async getClientId(userId: number): Promise<number | null> {
     return await this.clientService.getClientId(userId);
+  }
+
+  async getUserRole(userId: number): Promise<string | null> {
+    const maybeClient = await this.clientService.getClientId(userId);
+    const maybeEmployee = await this.employeeService.getEmployeeId(userId);
+    if (maybeClient) return userRole.CLIENT;
+    if (maybeEmployee) return userRole.EMPLOYEE;
+    return null;
+  }
+
+  async getClientBasicInfo(
+    req: AuthenticatedUser
+  ): Promise<AccountBasicInfoDto | null> {
+    if (!req.user) {
+      return null;
+    }
+    const firstName = await this.clientService.getUserFirstName(
+      req.user.user_id
+    );
+    return new AccountBasicInfoDto(
+      req.user.account_id,
+      req.user.role,
+      firstName || ""
+    );
   }
 }

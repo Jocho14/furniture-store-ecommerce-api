@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Account } from "../accounts/account.entity";
 import { Client } from "../clients/client.entity";
+import { Employee } from "../employees/employee.entity";
 
 @Entity("users")
 export class User {
@@ -42,4 +43,7 @@ export class User {
 
   @OneToOne(() => Client, (client) => client.user, { cascade: true })
   client!: Client;
+
+  @OneToOne(() => Employee, (employee) => employee.user, { cascade: true })
+  employee!: Client;
 }

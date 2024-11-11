@@ -6,11 +6,13 @@ import { UserController } from "./user.controller";
 import { UserRepository } from "./user.repository";
 import { AccountModule } from "../accounts/account.module";
 import { ClientModule } from "../clients/client.module";
+import { EmployeeModule } from "../employees/employee.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     forwardRef(() => ClientModule),
+    forwardRef(() => EmployeeModule),
     AccountModule,
   ],
   providers: [UserService, UserRepository],

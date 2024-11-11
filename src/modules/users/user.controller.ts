@@ -1,8 +1,13 @@
-import { Controller, Get, Post, Body, Param } from "@nestjs/common";
+import { Controller, Get, Post, Body, Req, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "./user.entity";
+import { ClientGuard } from "../../auth/guards/client.guard";
+import { Request } from "express";
 
 import { UserCreateDto } from "./DTO/userCreate.dto";
+
+import { AuthenticatedUser } from "../../auth/interface/IAuth";
+import { AccountBasicInfoDto } from "./DTO/accountBasicInfo.dto";
 
 @Controller("users")
 export class UserController {
@@ -14,7 +19,19 @@ export class UserController {
   }
 
   @Post("create-client")
-  createClient(@Body() userCreateDto: UserCreateDto): Promise<any> {
-    return this.userService.create(userCreateDto);
+  async createClient(@Body() userCreateDto: UserCreateDto): Promise<any> {
+    return await this.userService.create(userCreateDto);
+  }
+
+  @Get("account-basic-info")
+  @UseGuards(ClientGuard)
+  async getClientBasicInfo(
+    @Req() req: AuthenticatedUser
+  ): Promise<AccountBasicInfoDto | null> {
+    if (!req.user) {
+      return null;
+    }
+
+    return await this.userService.getClientBasicInfo(req);
   }
 }

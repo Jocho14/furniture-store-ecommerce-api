@@ -142,8 +142,6 @@ export class ProductController {
     @Param("id") productId: number,
     @Body() body: CreateReviewDto
   ): Promise<any> {
-    console.log(req.user);
-
     return await this.productService.addReview(productId, body, req.user);
   }
 }

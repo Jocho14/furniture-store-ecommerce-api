@@ -262,7 +262,6 @@ export class ProductService {
   }
 
   async getReviews(productId: number): Promise<GetReviewDto[]> {
-    console.log("entered getRevies service, productId: ", productId);
     return await this.reviewService.getReviewsForProduct(productId);
   }
 
