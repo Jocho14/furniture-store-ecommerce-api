@@ -25,6 +25,8 @@ import { GetReviewDto } from "../reviews/DTO/getReview.dto";
 import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
 import { Request } from "express";
 import { JwtGuard } from "../../auth/guards/jwt.guard";
+import { ClientGuard } from "../../auth/guards/client.guard";
+import { AuthenticatedUser } from "../../auth/interface/IAuth";
 
 import {
   AddProductResponse,
@@ -136,12 +138,16 @@ export class ProductController {
   }
 
   @Post(":id/add-review")
-  @UseGuards(JwtGuard)
+  @UseGuards(ClientGuard)
   async addReview(
-    @Req() req: Request,
+    @Req() req: AuthenticatedUser,
     @Param("id") productId: number,
     @Body() body: CreateReviewDto
   ): Promise<any> {
-    return await this.productService.addReview(productId, body, req.user);
+    if (!req.user) {
+      return null;
+    }
+
+    return await this.productService.addReview(productId, body, req);
   }
 }

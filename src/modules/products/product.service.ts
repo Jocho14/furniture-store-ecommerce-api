@@ -23,6 +23,7 @@ import { ReviewService } from "../reviews/review.service";
 import { GetReviewDto } from "../reviews/DTO/getReview.dto";
 import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
 import { UserService } from "../users/user.service";
+import { AuthenticatedUser } from "../../auth/interface/IAuth";
 
 @Injectable()
 export class ProductService {
@@ -268,9 +269,12 @@ export class ProductService {
   async addReview(
     productId: number,
     body: CreateReviewDto,
-    user: any
+    req: AuthenticatedUser
   ): Promise<any> {
-    const clientId = await this.userService.getClientId(user.user_id);
+    if (!req.user) {
+      return null;
+    }
+    const clientId = await this.userService.getClientId(req.user.user_id);
     return await this.reviewService.addReview(productId, body, clientId);
   }
 }
