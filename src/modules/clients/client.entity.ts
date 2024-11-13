@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { User } from "../users/user.entity";
 import { Review } from "../reviews/review.entity";
+import { Order } from "../orders/order.entity";
 
 @Entity("clients")
 export class Client {
@@ -26,4 +27,7 @@ export class Client {
 
   @OneToMany(() => Review, (review) => review.client, { cascade: true })
   reviews!: Review[];
+
+  @OneToMany(() => Order, (order) => order.client, { cascade: true })
+  orders!: Order[];
 }

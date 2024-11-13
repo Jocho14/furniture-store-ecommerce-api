@@ -16,7 +16,7 @@ export class ClientGuard extends JwtGuard {
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-
+    console.log("request: ", request);
     if (user.role !== userRole.CLIENT) {
       throw new UnauthorizedException(
         "You do not have permission to access this resource."
