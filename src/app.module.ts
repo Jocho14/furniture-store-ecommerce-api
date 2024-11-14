@@ -10,6 +10,9 @@ import { WarehouseModule } from "./modules/warehouses/warehouse.module";
 import { ProductWarehouseModule } from "./modules/products-warehouses/product-warehouse.module";
 import { CategoryModule } from "./modules/categories/category.module";
 import { ReviewModule } from "./modules/reviews/review.module";
+import { OrderProductModule } from "./modules/orders-products/order-product.module";
+import { OrderModule } from "./modules/orders/order.module";
+import { ShippingAddressModule } from "./modules/shipping-addresses/shipping-address.module";
 
 dotenv.config();
 
@@ -33,6 +36,9 @@ dotenv.config();
     UserModule,
     CategoryModule,
     ReviewModule,
+    OrderProductModule,
+    OrderModule,
+    ShippingAddressModule,
   ],
 })
 export class AppModule {}

@@ -9,6 +9,8 @@ import { Order } from "./order.entity";
 import { OrderService } from "./order.service";
 import { OrderController } from "./order.controller";
 import { OrderRepository } from "./order.repository";
+import { OrderProductModule } from "../orders-products/order-product.module";
+import { ProductModule } from "../products/product.module";
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { OrderRepository } from "./order.repository";
     ClientModule,
     GuestModule,
     ShippingAddressModule,
+    OrderProductModule,
+    ProductModule,
   ],
   providers: [OrderService, OrderRepository],
   controllers: [OrderController],

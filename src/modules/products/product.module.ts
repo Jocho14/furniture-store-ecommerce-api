@@ -9,17 +9,20 @@ import { ProductWarehouseModule } from "../products-warehouses/product-warehouse
 import { CategoryModule } from "../categories/category.module";
 import { ReviewModule } from "../reviews/review.module";
 import { UserModule } from "../users/user.module";
+import { OrderProductModule } from "../orders-products/order-product.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product]),
     ImageModule,
     ProductWarehouseModule,
+    OrderProductModule,
     CategoryModule,
     ReviewModule,
     UserModule,
   ],
   providers: [ProductService, ProductRepository],
   controllers: [ProductController],
+  exports: [ProductService],
 })
 export class ProductModule {}

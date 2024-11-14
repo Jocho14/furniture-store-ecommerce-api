@@ -9,6 +9,7 @@ import { Image } from "../images/image.entity";
 import { Category } from "../categories/category.entity";
 import { Review } from "../reviews/review.entity";
 import { ProductWarehouse } from "../products-warehouses/product-warehouse.entity";
+import { OrderProduct } from "../orders-products/order-product.entity";
 
 @Entity("products")
 export class Product {
@@ -47,4 +48,7 @@ export class Product {
     (productWarehouse) => productWarehouse.product
   )
   productWarehouses!: ProductWarehouse[];
+
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
+  orderProducts!: OrderProduct[];
 }

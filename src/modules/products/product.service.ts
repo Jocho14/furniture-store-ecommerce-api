@@ -277,4 +277,9 @@ export class ProductService {
     const clientId = await this.userService.getClientId(req.user.user_id);
     return await this.reviewService.addReview(productId, body, clientId);
   }
+
+  async getProducts(productIds: number[]): Promise<Product[] | null> {
+    const product = await this.productRepository.getByIds(productIds);
+    return product || null;
+  }
 }

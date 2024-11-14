@@ -4,12 +4,15 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   ManyToOne,
+  OneToMany,
   JoinColumn,
 } from "typeorm";
 
 import { Client } from "../clients/client.entity";
 import { Guest } from "../guests/guest.entity";
 import { ShippingAddress } from "../shipping-addresses/shipping-address.entity";
+import { OrderStatus } from "./enum/orderStatus";
+import { OrderProduct } from "../orders-products/order-product.entity";
 
 @Entity("orders")
 export class Order {
@@ -47,15 +50,24 @@ export class Order {
   })
   order_date!: Date;
 
+  @Column({
+    nullable: false,
+    type: "enum",
+    enum: OrderStatus,
+    default: OrderStatus.PENDING,
+  })
   @ManyToOne(() => Client, (client) => client.orders)
   @JoinColumn({ name: "client_id" })
-  client!: Client;
+  client?: Client;
 
   @ManyToOne(() => Guest, (guest) => guest.orders)
   @JoinColumn({ name: "guest_id" })
-  guest!: Guest;
+  guest?: Guest;
 
   @OneToOne(() => ShippingAddress, (shippingAddress) => shippingAddress.order)
   @JoinColumn({ name: "shipping_address_id" })
   shippingAddress!: ShippingAddress;
+
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.order)
+  orderProducts!: OrderProduct[];
 }
