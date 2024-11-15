@@ -12,5 +12,5 @@ export class CreateGuestOrderDto {
   readonly shippingAddressDto!: CreateShippingAddressDto;
 
   @IsNotEmpty()
-  readonly orderProducts!: OrderProductDto[];
+  readonly orderProductDtos!: OrderProductDto[];
 }

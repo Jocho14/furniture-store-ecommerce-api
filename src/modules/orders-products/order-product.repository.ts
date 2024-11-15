@@ -13,4 +13,12 @@ export class OrderProductRepository {
   async create(orderProduct: OrderProduct): Promise<OrderProduct> {
     return await this.repository.save(orderProduct);
   }
+
+  async getProducts(orderId: number): Promise<OrderProduct[]> {
+    return await this.repository.find({
+      where: {
+        order_id: orderId,
+      },
+    });
+  }
 }

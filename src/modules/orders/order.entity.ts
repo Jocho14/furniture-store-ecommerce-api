@@ -56,13 +56,15 @@ export class Order {
     enum: OrderStatus,
     default: OrderStatus.PENDING,
   })
-  @ManyToOne(() => Client, (client) => client.orders)
-  @JoinColumn({ name: "client_id" })
-  client?: Client;
+  status!: OrderStatus;
 
-  @ManyToOne(() => Guest, (guest) => guest.orders)
+  @ManyToOne(() => Client, (client) => client.orders, { nullable: true })
+  @JoinColumn({ name: "client_id" })
+  client?: Client | null;
+
+  @ManyToOne(() => Guest, (guest) => guest.orders, { nullable: true })
   @JoinColumn({ name: "guest_id" })
-  guest?: Guest;
+  guest?: Guest | null;
 
   @OneToOne(() => ShippingAddress, (shippingAddress) => shippingAddress.order)
   @JoinColumn({ name: "shipping_address_id" })

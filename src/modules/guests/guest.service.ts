@@ -17,4 +17,8 @@ export class GuestService {
     );
     return await this.guestRepository.create(guest);
   }
+
+  async getEmail(guestId: number): Promise<string | undefined> {
+    return await this.guestRepository.getEmail(guestId);
+  }
 }

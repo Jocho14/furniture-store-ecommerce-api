@@ -22,4 +22,8 @@ export class OrderProductService {
 
     return this.orderProductRepository.create(orderProduct);
   }
+
+  async getProducts(orderId: number): Promise<OrderProduct[]> {
+    return await this.orderProductRepository.getProducts(orderId);
+  }
 }

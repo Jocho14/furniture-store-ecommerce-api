@@ -7,6 +7,8 @@ import { ShippingAddressService } from "../shipping-addresses/shipping-address.s
 import { ProductService } from "../products/product.service";
 import { OrderProductService } from "../orders-products/order-product.service";
 import { Order } from "./order.entity";
+import { LineItemDto } from "./DTO/lineItem.dto";
+import { OrderProduct } from "../orders-products/order-product.entity";
 
 @Injectable()
 export class OrderService {
@@ -18,7 +20,9 @@ export class OrderService {
     private readonly orderProductService: OrderProductService
   ) {}
 
-  async createGuestOrder(createGuestOrderDto: CreateGuestOrderDto) {
+  async createGuestOrder(
+    createGuestOrderDto: CreateGuestOrderDto
+  ): Promise<number> {
     const guest = await this.guestService.createGuest(
       createGuestOrderDto.guestDto
     );
@@ -28,12 +32,12 @@ export class OrderService {
       );
 
     const products = await this.productService.getProducts(
-      createGuestOrderDto.orderProducts.map((p) => p.productId)
+      createGuestOrderDto.orderProductDtos.map((p) => p.productId)
     );
 
     let totalAmount = 0;
     products?.forEach((product) => {
-      const productDto = createGuestOrderDto.orderProducts.find(
+      const productDto = createGuestOrderDto.orderProductDtos.find(
         (p) => p.productId === product.product_id
       );
       if (productDto) {
@@ -48,12 +52,12 @@ export class OrderService {
       guest.guest_id
     );
 
-    const savedOrder = await this.orderRepository.create(order);
+    const createdOrder = await this.orderRepository.create(order);
 
     await Promise.all(
-      createGuestOrderDto.orderProducts.map((productDto) =>
+      createGuestOrderDto.orderProductDtos.map((productDto) =>
         this.orderProductService.createOrderProduct({
-          orderId: savedOrder.order_id,
+          orderId: createdOrder.order_id,
           productId: productDto.productId,
           productPrice: products?.find(
             (p) => p.product_id === productDto.productId
@@ -63,6 +67,21 @@ export class OrderService {
       )
     );
 
-    return savedOrder;
+    return createdOrder.order_id;
+  }
+
+  async getOrder(orderId: number): Promise<Order | null> {
+    return await this.orderRepository.getOrder(orderId);
+  }
+
+  async getProducts(orderId: number): Promise<OrderProduct[]> {
+    return await this.orderProductService.getProducts(orderId);
+  }
+
+  async getGuestEmail(orderId: number): Promise<string | undefined> {
+    const guestId = await this.orderRepository.getGuestId(orderId);
+    if (!guestId) return undefined;
+    const email = await this.guestService.getEmail(guestId);
+    return email;
   }
 }

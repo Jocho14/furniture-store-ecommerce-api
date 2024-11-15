@@ -16,4 +16,13 @@ export class GuestRepository {
   async create(guest: Guest): Promise<Guest> {
     return await this.repository.save(guest);
   }
+
+  async getEmail(guestId: number): Promise<string | undefined> {
+    const guest = await this.repository.findOne({
+      where: {
+        guest_id: guestId,
+      },
+    });
+    return guest ? guest.email : undefined;
+  }
 }
