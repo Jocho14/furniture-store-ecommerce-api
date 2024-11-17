@@ -28,6 +28,8 @@ import { Request } from "express";
 import { JwtGuard } from "../../auth/guards/jwt.guard";
 import { ClientGuard } from "../../auth/guards/client.guard";
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
+import { BadRequestException } from "@nestjs/common";
+import { listProudctDto } from "./DTO/listProduct.dto";
 
 import {
   AddProductResponse,
@@ -58,6 +60,11 @@ export class ProductController {
     @Body("ids") ids: number[]
   ): Promise<PreviewProductDto[]> {
     return await this.productService.getPreviews(ids);
+  }
+
+  @Get("list")
+  async getList(): Promise<listProudctDto[]> {
+    return await this.productService.getList();
   }
 
   @Get(":id/details/client")
@@ -155,5 +162,14 @@ export class ProductController {
   @Get("prices")
   async getPrices(@Query("ids") ids: number[]): Promise<any[]> {
     return await this.productService.getPrices(ids);
+  }
+
+  @Get("search")
+  async searchProducts(@Query("query") query: string) {
+    if (!query || query.trim().length === 0) {
+      throw new BadRequestException("Query parameter is required");
+    }
+
+    return await this.productService.searchProducts(query.trim());
   }
 }

@@ -24,6 +24,8 @@ import { GetReviewDto } from "../reviews/DTO/getReview.dto";
 import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
 import { UserService } from "../users/user.service";
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
+import { SearchProductDto } from "./DTO/searchProduct.dto";
+import { listProudctDto } from "./DTO/listProduct.dto";
 
 @Injectable()
 export class ProductService {
@@ -292,5 +294,45 @@ export class ProductService {
       id: product.product_id,
       price: product.price,
     }));
+  }
+
+  async searchProducts(query: string): Promise<SearchProductDto[]> {
+    const products = await this.productRepository.search(query);
+    const searchedProducts = await Promise.all(
+      products.map(async (product) => {
+        const thumbnail = await this.imageService.getThumbnailForProduct(
+          product.product_id
+        );
+        return {
+          productId: product.product_id,
+          name: product.name,
+          category: "", //TODO:get product category
+          thumbnailUrl: thumbnail?.url || "null",
+        };
+      })
+    );
+
+    return searchedProducts;
+  }
+
+  async getList(): Promise<listProudctDto[]> {
+    const products = await this.productRepository.getAll();
+    const listProducts = await Promise.all(
+      products.map(async (product) => {
+        const thumbnail = await this.imageService.getThumbnailForProduct(
+          product.product_id
+        );
+        return {
+          productId: product.product_id,
+          name: product.name,
+          price: product.price,
+          thumbnailUrl: thumbnail?.url || "null",
+          category: "",
+          averageRating: 0,
+        };
+      })
+    );
+
+    return listProducts;
   }
 }

@@ -1,7 +1,7 @@
 import { Repository, In } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-
+import { ILike } from "typeorm";
 import { Product } from "./product.entity";
 
 @Injectable()
@@ -42,5 +42,12 @@ export class ProductRepository {
 
   async deactivate(id: number): Promise<void> {
     await this.repository.update(id, { is_active: false });
+  }
+
+  async search(query: string): Promise<Product[]> {
+    return await this.repository.find({
+      where: { name: ILike(`%${query}%`) },
+      take: 20,
+    });
   }
 }
