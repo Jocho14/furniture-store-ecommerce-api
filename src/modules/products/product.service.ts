@@ -282,4 +282,15 @@ export class ProductService {
     const product = await this.productRepository.getByIds(productIds);
     return product || null;
   }
+
+  async getPrices(ids: number[]): Promise<any[]> {
+    const products = await this.productRepository.getByIds(ids);
+    if (!products) {
+      return [];
+    }
+    return products.map((product) => ({
+      id: product.product_id,
+      price: product.price,
+    }));
+  }
 }

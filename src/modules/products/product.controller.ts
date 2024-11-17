@@ -10,6 +10,7 @@ import {
   UploadedFiles,
   Req,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import {
   FileInterceptor,
@@ -149,5 +150,10 @@ export class ProductController {
     }
 
     return await this.productService.addReview(productId, body, req);
+  }
+
+  @Get("prices")
+  async getPrices(@Query("ids") ids: number[]): Promise<any[]> {
+    return await this.productService.getPrices(ids);
   }
 }

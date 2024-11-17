@@ -28,7 +28,6 @@ export class UserController {
   async getClientBasicInfo(
     @Req() req: AuthenticatedUser
   ): Promise<AccountBasicInfoDto | null> {
-    console.log("req ", req);
     if (!req.user) {
       return null;
     }

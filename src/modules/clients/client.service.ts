@@ -18,8 +18,7 @@ export class ClientService {
   }
 
   async getUserFirstName(id: number): Promise<string | null> {
-    const userId = await this.clientRepository.getUserId(id);
-    return await this.userService.getUserFirstName(userId);
+    return await this.userService.getUserFirstName(id);
   }
 
   async getClientId(userId: number): Promise<number | null> {

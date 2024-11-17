@@ -9,6 +9,7 @@ import { OrderProductService } from "../orders-products/order-product.service";
 import { Order } from "./order.entity";
 import { LineItemDto } from "./DTO/lineItem.dto";
 import { OrderProduct } from "../orders-products/order-product.entity";
+import { EmployeeOrderPreviewDto } from "./DTO/employeeOrderPreview.dto";
 
 @Injectable()
 export class OrderService {
@@ -83,5 +84,22 @@ export class OrderService {
     if (!guestId) return undefined;
     const email = await this.guestService.getEmail(guestId);
     return email;
+  }
+
+  async getEmployeePreviews(): Promise<EmployeeOrderPreviewDto[]> {
+    const orders = await this.orderRepository.getAll();
+    const previews = await Promise.all(
+      orders.map(async (order) => {
+        const email = await this.guestService.getEmail(order.order_id);
+        return {
+          id: order.order_id,
+          status: order.status,
+          email: email,
+          amount: order.total_amount,
+          date: order.order_date,
+        };
+      })
+    );
+    return previews;
   }
 }

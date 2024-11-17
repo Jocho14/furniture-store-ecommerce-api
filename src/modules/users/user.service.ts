@@ -71,6 +71,8 @@ export class UserService {
     const firstName = await this.clientService.getUserFirstName(
       req.user.user_id
     );
+    console.log("User id: ", req.user.user_id);
+    console.log("FIRST NAME: ", firstName);
     return new AccountBasicInfoDto(
       req.user.account_id,
       req.user.role,

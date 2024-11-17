@@ -31,4 +31,8 @@ export class OrderRepository {
     });
     return order ? order.guest_id : null;
   }
+
+  async getAll(): Promise<Order[]> {
+    return await this.repository.find();
+  }
 }

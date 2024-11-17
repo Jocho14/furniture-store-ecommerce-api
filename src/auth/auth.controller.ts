@@ -39,7 +39,7 @@ export class AuthController {
       return res.send({ message: "Login failed" });
 
     const { token } = req.user;
-    console.log(token);
+
     res.cookie("auth_token", token, {
       httpOnly: true,
       secure: true,
