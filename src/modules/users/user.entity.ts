@@ -42,8 +42,8 @@ export class User {
   account!: Account;
 
   @OneToOne(() => Client, (client) => client.user, { cascade: true })
-  client!: Client;
+  client!: Client | null;
 
   @OneToOne(() => Employee, (employee) => employee.user, { cascade: true })
-  employee!: Client;
+  employee!: Client | null;
 }

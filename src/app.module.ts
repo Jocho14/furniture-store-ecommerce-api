@@ -27,9 +27,9 @@ dotenv.config();
       database: process.env.DB_NAME,
       entities: [__dirname + "/**/*.entity{.ts,.js}"],
       synchronize: false, // set to false in production
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      // ssl: {
+      //   rejectUnauthorized: false,
+      // },
     }),
     AuthModule,
     AccountModule,
