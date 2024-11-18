@@ -77,7 +77,7 @@ describe("ClientService", () => {
   });
 
   it("should return user first name", async () => {
-    const firstName = "John";
+    const firstName = "Jan";
     jest.spyOn(userService, "getUserFirstName").mockResolvedValue(firstName);
 
     expect(await service.getUserFirstName(1)).toBe(firstName);
