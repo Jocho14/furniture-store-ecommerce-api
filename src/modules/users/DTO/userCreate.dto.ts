@@ -21,3 +21,9 @@ export class UserCreateDto {
   @IsNotEmpty()
   readonly dateOfBirth!: Date;
 }
+
+export class EmployeeCreateDto extends UserCreateDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly secret!: string;
+}

@@ -2,6 +2,8 @@ import { Body, Controller, Post, Get, Param } from "@nestjs/common";
 
 import { OrderService } from "./order.service";
 
+import { UseGuards } from "@nestjs/common";
+import { EmployeeGuard } from "../../auth/guards/employee.guard";
 import { CreateGuestOrderDto } from "./DTO/createGuestOrder.dto";
 import { EmployeeOrderPreviewDto } from "./DTO/employeeOrderPreview.dto";
 
@@ -10,6 +12,7 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get("employee-previews")
+  @UseGuards(EmployeeGuard)
   async getEmployeePreviews(): Promise<EmployeeOrderPreviewDto[]> {
     return await this.orderService.getEmployeePreviews();
   }

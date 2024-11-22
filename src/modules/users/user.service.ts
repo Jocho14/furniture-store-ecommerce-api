@@ -1,15 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { UserRepository } from "./user.repository";
 import { User } from "./user.entity";
-import { UserCreateDto } from "./DTO/userCreate.dto";
+import { UserCreateDto, EmployeeCreateDto } from "./DTO/userCreate.dto";
 import { Account } from "../accounts/account.entity";
 import { AccountService } from "../accounts/account.service";
 import { Client } from "../clients/client.entity";
 import { ClientService } from "../clients/client.service";
+import { Employee } from "../employees/employee.entity";
 import { EmployeeService } from "../employees/employee.service";
 import { userRole } from "../../auth/enum/userRole";
 import { AccountBasicInfoDto } from "./DTO/accountBasicInfo.dto";
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 @Injectable()
 export class UserService {
@@ -46,6 +50,32 @@ export class UserService {
     return createUserResponse;
   }
 
+  async createEmployee(employeeCreateDto: EmployeeCreateDto): Promise<any> {
+    if (employeeCreateDto.secret !== process.env.EMPLOYEE_SECRET) {
+      return { error: "Invalid secret" };
+    }
+
+    const user = new User(
+      employeeCreateDto.firstName,
+      employeeCreateDto.lastName,
+      employeeCreateDto.phoneNumber,
+      employeeCreateDto.dateOfBirth
+    );
+    const createUserResponse = await this.userRepository.createUser(user);
+
+    const account = new Account(
+      createUserResponse.user_id,
+      employeeCreateDto.account.email,
+      employeeCreateDto.account.password
+    );
+    await this.accountService.create(account);
+
+    const employee = new Employee(createUserResponse.user_id);
+    await this.employeeService.create(employee);
+
+    return createUserResponse;
+  }
+
   async getUserFirstName(id: number | null): Promise<string | null> {
     return await this.userRepository.getFirstName(id);
   }
@@ -68,11 +98,13 @@ export class UserService {
     if (!req.user) {
       return null;
     }
+
+    console.log(req.user);
+
     const firstName = await this.clientService.getUserFirstName(
       req.user.user_id
     );
-    console.log("User id: ", req.user.user_id);
-    console.log("FIRST NAME: ", firstName);
+
     return new AccountBasicInfoDto(
       req.user.account_id,
       req.user.role,

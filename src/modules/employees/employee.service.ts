@@ -15,4 +15,8 @@ export class EmployeeService {
   async getEmployeeId(id: number): Promise<number | null> {
     return await this.employeeRepository.getEmployeeId(id);
   }
+
+  async create(employee: Employee): Promise<any> {
+    return await this.employeeRepository.createEmployee(employee);
+  }
 }

@@ -7,23 +7,23 @@ import { JwtGuard } from "./jwt.guard";
 import { userRole } from "../enum/userRole";
 
 @Injectable()
-export class EmployeeGuard extends JwtGuard {
+export class CombinedGuard extends JwtGuard {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const canActivate = await super.canActivate(context);
-
     if (!canActivate) {
       return false;
     }
 
     const request = context.switchToHttp().getRequest();
+    console.log(request.user);
     const user = request.user;
 
-    if (user.role !== userRole.EMPLOYEE) {
-      throw new UnauthorizedException(
-        "You do not have permission to access this resource."
-      );
+    if (user.role === userRole.CLIENT || user.role === userRole.EMPLOYEE) {
+      return true;
     }
 
-    return true;
+    throw new UnauthorizedException(
+      "You do not have permission to access this resource."
+    );
   }
 }

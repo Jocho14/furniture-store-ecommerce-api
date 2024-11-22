@@ -22,14 +22,12 @@ import { DetailProductClientDto } from "./DTO/detailProductClient.dto";
 import { ExtendedPreviewProductDto } from "./DTO/extendedPreviewProduct.dto";
 import { PreviewProductDto } from "./DTO/previewProduct.dto";
 import { PaymentProductDto } from "./DTO/paymentProduct.dto";
-import { GetReviewDto } from "../reviews/DTO/getReview.dto";
 import { CreateReviewDto } from "../reviews/DTO/createReview.dto";
-import { Request } from "express";
-import { JwtGuard } from "../../auth/guards/jwt.guard";
 import { ClientGuard } from "../../auth/guards/client.guard";
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
 import { BadRequestException } from "@nestjs/common";
 import { listProudctDto } from "./DTO/listProduct.dto";
+import { EmployeeGuard } from "../../auth/guards/employee.guard";
 
 import {
   AddProductResponse,
@@ -43,16 +41,17 @@ import { ProductService } from "./product.service";
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get("all-with-thumbnails")
-  async getAllWithThumbnails(): Promise<any[]> {
-    return await this.productService.getAllWithThumbnails();
-  }
-
   @Post("extended-previews")
   async getExtendedPreviewsByIds(
     @Body("ids") ids: number[]
   ): Promise<ExtendedPreviewProductDto[]> {
     return await this.productService.getExtendedPreviews(ids);
+  }
+
+  @Get("all-with-thumbnails")
+  @UseGuards(EmployeeGuard)
+  async getAllWithThumbnails() {
+    return await this.productService.getAllWithThumbnails();
   }
 
   @Post("previews")

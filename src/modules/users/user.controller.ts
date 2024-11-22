@@ -4,7 +4,9 @@ import { User } from "./user.entity";
 import { ClientGuard } from "../../auth/guards/client.guard";
 import { Request } from "express";
 
-import { UserCreateDto } from "./DTO/userCreate.dto";
+import { UserCreateDto, EmployeeCreateDto } from "./DTO/userCreate.dto";
+import { EmployeeGuard } from "../../auth/guards/employee.guard";
+import { CombinedGuard } from "../../auth/guards/combined.guard";
 
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
 import { AccountBasicInfoDto } from "./DTO/accountBasicInfo.dto";
@@ -23,8 +25,15 @@ export class UserController {
     return await this.userService.create(userCreateDto);
   }
 
+  @Post("create-employee")
+  async createEmployee(
+    @Body() employeeCreateDto: EmployeeCreateDto
+  ): Promise<any> {
+    return await this.userService.createEmployee(employeeCreateDto);
+  }
+
   @Get("account-basic-info")
-  @UseGuards(ClientGuard)
+  @UseGuards(CombinedGuard)
   async getClientBasicInfo(
     @Req() req: AuthenticatedUser
   ): Promise<AccountBasicInfoDto | null> {
