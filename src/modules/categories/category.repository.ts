@@ -17,4 +17,11 @@ export class CategoryRepository {
     });
     return category ? category.name : "";
   }
+
+  async getCategoryId(name: string): Promise<number> {
+    const category = await this.repository.findOne({
+      where: { name },
+    });
+    return category ? category.category_id : -1;
+  }
 }

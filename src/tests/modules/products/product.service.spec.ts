@@ -6,6 +6,7 @@ import { ProductWarehouseService } from "../../../modules/products-warehouses/pr
 import { ReviewService } from "../../../modules/reviews/review.service";
 import { UserService } from "../../../modules/users/user.service";
 import { AuthenticatedUser } from "../../../auth/interface/IAuth";
+import { ProductCategoryService } from "../../../modules/products-categories/product-category.service";
 
 describe("ProductService", () => {
   let productService: ProductService;
@@ -14,6 +15,7 @@ describe("ProductService", () => {
   let productWarehouseService: ProductWarehouseService;
   let reviewService: ReviewService;
   let userService: UserService;
+  let productCategoryService: ProductCategoryService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,6 +41,12 @@ describe("ProductService", () => {
             uploadImages: jest.fn(),
             deleteAllImages: jest.fn(),
             getImageUrlsForProduct: jest.fn(),
+          },
+        },
+        {
+          provide: ProductCategoryService,
+          useValue: {
+            getCategory: jest.fn(),
           },
         },
         {
@@ -73,6 +81,9 @@ describe("ProductService", () => {
     );
     reviewService = module.get<ReviewService>(ReviewService);
     userService = module.get<UserService>(UserService);
+    productCategoryService = module.get<ProductCategoryService>(
+      ProductCategoryService
+    );
   });
 
   it("should be defined", () => {
@@ -88,12 +99,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
 
@@ -136,12 +145,10 @@ describe("ProductService", () => {
       description: "Description",
       is_active: true,
       images: [],
-      categories: [],
-      created_at: new Date(),
-      updated_at: new Date(),
       reviews: [],
       productWarehouses: [],
       orderProducts: [],
+      productCategories: [],
     };
 
     const mockImages = [
@@ -186,12 +193,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
     const mockThumbnail = {
@@ -233,12 +238,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
     const mockThumbnail = {
@@ -283,6 +286,7 @@ describe("ProductService", () => {
       description: "Description",
       quantity: 10,
       images: [{ originalname: "file1.jpg" }] as Express.Multer.File[],
+      category: "",
     };
     const mockProductId = 1;
     const mockImageUrls = ["url1.jpg"];
@@ -310,12 +314,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
     const mockImageUrls = ["url1.jpg"];
@@ -344,12 +346,10 @@ describe("ProductService", () => {
       description: "Description",
       is_active: true,
       images: [],
-      categories: [],
-      created_at: new Date(),
-      updated_at: new Date(),
       reviews: [],
       productWarehouses: [],
       orderProducts: [],
+      productCategories: [],
     };
     const mockImageUrls = ["url1.jpg"];
     const mockQuantity = 10;
@@ -379,6 +379,7 @@ describe("ProductService", () => {
       description: "Description",
       quantity: 10,
       images: [{ originalname: "file1.jpg" }] as Express.Multer.File[],
+      category: "",
     };
     const mockImageUrls = ["url1.jpg"];
 
@@ -405,12 +406,10 @@ describe("ProductService", () => {
       description: "Description",
       is_active: true,
       images: [],
-      categories: [],
-      created_at: new Date(),
-      updated_at: new Date(),
       reviews: [],
       productWarehouses: [],
       orderProducts: [],
+      productCategories: [],
     };
     const mockThumbnail = {
       image_id: 1,
@@ -490,12 +489,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
 
@@ -514,12 +511,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
 
@@ -538,12 +533,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
     const mockThumbnail = {
@@ -580,12 +573,10 @@ describe("ProductService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
     const mockThumbnail = {

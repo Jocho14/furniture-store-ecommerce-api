@@ -13,6 +13,7 @@ import { ReviewModule } from "./modules/reviews/review.module";
 import { OrderProductModule } from "./modules/orders-products/order-product.module";
 import { OrderModule } from "./modules/orders/order.module";
 import { ShippingAddressModule } from "./modules/shipping-addresses/shipping-address.module";
+import { ProductCategoryModule } from "./modules/products-categories/product-category.module";
 
 dotenv.config();
 
@@ -38,6 +39,7 @@ dotenv.config();
     ProductWarehouseModule,
     UserModule,
     CategoryModule,
+    ProductCategoryModule,
     ReviewModule,
     OrderProductModule,
     OrderModule,

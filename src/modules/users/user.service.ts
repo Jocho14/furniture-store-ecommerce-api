@@ -99,8 +99,6 @@ export class UserService {
       return null;
     }
 
-    console.log(req.user);
-
     const firstName = await this.clientService.getUserFirstName(
       req.user.user_id
     );

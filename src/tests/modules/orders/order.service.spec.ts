@@ -134,12 +134,10 @@ describe("OrderService", () => {
         description: "Description",
         is_active: true,
         images: [],
-        categories: [],
-        created_at: new Date(),
-        updated_at: new Date(),
         reviews: [],
         productWarehouses: [],
         orderProducts: [],
+        productCategories: [],
       },
     ];
 

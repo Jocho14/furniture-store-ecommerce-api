@@ -15,7 +15,6 @@ export class CombinedGuard extends JwtGuard {
     }
 
     const request = context.switchToHttp().getRequest();
-    console.log(request.user);
     const user = request.user;
 
     if (user.role === userRole.CLIENT || user.role === userRole.EMPLOYEE) {

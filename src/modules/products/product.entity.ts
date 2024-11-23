@@ -9,6 +9,7 @@ import { Image } from "../images/image.entity";
 import { Category } from "../categories/category.entity";
 import { Review } from "../reviews/review.entity";
 import { ProductWarehouse } from "../products-warehouses/product-warehouse.entity";
+import { ProductCategory } from "../products-categories/product-category.entity";
 import { OrderProduct } from "../orders-products/order-product.entity";
 
 @Entity("products")
@@ -37,9 +38,6 @@ export class Product {
   @OneToMany(() => Image, (image) => image.product, { cascade: true })
   images!: Image[];
 
-  @OneToMany(() => Category, (category) => category.product, { cascade: true })
-  categories!: Category[];
-
   @OneToMany(() => Review, (review) => review.product, { cascade: true })
   reviews!: Review[];
 
@@ -48,6 +46,12 @@ export class Product {
     (productWarehouse) => productWarehouse.product
   )
   productWarehouses!: ProductWarehouse[];
+
+  @OneToMany(
+    () => ProductCategory,
+    (productCategory) => productCategory.product
+  )
+  productCategories!: ProductCategory[];
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts!: OrderProduct[];

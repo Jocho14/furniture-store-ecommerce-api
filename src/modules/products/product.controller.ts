@@ -78,9 +78,9 @@ export class ProductController {
   async uploadImage(
     @Param("id") id: number,
     @UploadedFile()
-    file: Express.Multer.File[]
+    files: Express.Multer.File[]
   ): Promise<string[] | undefined> {
-    return await this.productService.uploadFiles(id, file);
+    return await this.productService.uploadFiles(id, files);
   }
 
   @Post("add")
@@ -95,7 +95,9 @@ export class ProductController {
       images: files.images || [],
       description: body.description,
       quantity: parseInt(body.quantity, 10),
+      category: body.category,
     };
+    console.log(body);
 
     return await this.productService.add(detailedProductDto);
   }
@@ -127,8 +129,9 @@ export class ProductController {
       images: files.images || [],
       description: body.description,
       quantity: parseInt(body.quantity, 10),
+      category: body.category,
     };
-
+    console.log(body);
     return await this.productService.update(id, detailedProductDto);
   }
 

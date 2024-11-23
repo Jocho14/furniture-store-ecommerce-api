@@ -26,6 +26,8 @@ import { UserService } from "../users/user.service";
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
 import { SearchProductDto } from "./DTO/searchProduct.dto";
 import { listProudctDto } from "./DTO/listProduct.dto";
+import { ProductCategoryService } from "../products-categories/product-category.service";
+import { CategoryService } from "../categories/category.service";
 
 @Injectable()
 export class ProductService {
@@ -33,6 +35,8 @@ export class ProductService {
     private readonly productRepository: ProductRepository,
     private readonly imageService: ImageService,
     private readonly productWarehouseService: ProductWarehouseService,
+    private readonly productCategoryService: ProductCategoryService,
+    private readonly categoryService: CategoryService,
     private readonly reviewService: ReviewService,
     private readonly userService: UserService
   ) {}
@@ -144,6 +148,14 @@ export class ProductService {
         productId,
         detailProductEmployeeDto.quantity
       );
+      const categoryId = await this.categoryService.getIdByName(
+        detailProductEmployeeDto.category
+      );
+      await this.productCategoryService.saveProductCategory(
+        productId,
+        categoryId
+      );
+
       const imageFiles =
         detailProductEmployeeDto.images as Express.Multer.File[];
 
@@ -194,12 +206,14 @@ export class ProductService {
       productId
     );
     const quantity = await this.productWarehouseService.getQuantity(productId);
+    const category = await this.productCategoryService.getCategory(productId);
     const detailProductEmployeeDto = {
       name: product.name,
       price: product.price,
       description: product.description,
       quantity: quantity || 0,
       images: imageFiles || [],
+      category: category,
     };
 
     return detailProductEmployeeDto;
@@ -217,6 +231,16 @@ export class ProductService {
       );
 
       product.product_id = productId;
+
+      const categoryId = await this.categoryService.getIdByName(
+        detailedProductDto.category
+      );
+
+      await this.productCategoryService.deleteProductCategory(productId);
+      await this.productCategoryService.saveProductCategory(
+        productId,
+        categoryId
+      );
 
       await this.imageService.deleteAllImages(productId);
       const images = await this.imageService.uploadImages(
@@ -322,12 +346,15 @@ export class ProductService {
         const thumbnail = await this.imageService.getThumbnailForProduct(
           product.product_id
         );
+        const category = await this.productCategoryService.getCategory(
+          product.product_id
+        );
         return {
           productId: product.product_id,
           name: product.name,
           price: product.price,
           thumbnailUrl: thumbnail?.url || "null",
-          category: "",
+          category: category,
           averageRating: 0,
         };
       })

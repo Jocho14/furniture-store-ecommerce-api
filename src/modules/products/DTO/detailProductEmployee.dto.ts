@@ -11,4 +11,7 @@ export class DetailProductEmployeeDto extends BaseProductDto {
 
   @IsNumber()
   readonly quantity!: number;
+
+  @IsString()
+  readonly category!: string;
 }

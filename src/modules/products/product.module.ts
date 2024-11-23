@@ -10,6 +10,7 @@ import { CategoryModule } from "../categories/category.module";
 import { ReviewModule } from "../reviews/review.module";
 import { UserModule } from "../users/user.module";
 import { OrderProductModule } from "../orders-products/order-product.module";
+import { ProductCategoryModule } from "../products-categories/product-category.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { OrderProductModule } from "../orders-products/order-product.module";
     CategoryModule,
     ReviewModule,
     UserModule,
+    ProductCategoryModule,
   ],
   providers: [ProductService, ProductRepository],
   controllers: [ProductController],

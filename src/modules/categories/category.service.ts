@@ -20,4 +20,12 @@ export class CategoryService {
 
     return masonry;
   }
+
+  async getName(id: number): Promise<string> {
+    return this.categoryRepository.getCategoryName(id);
+  }
+
+  async getIdByName(name: string): Promise<number> {
+    return this.categoryRepository.getCategoryId(name);
+  }
 }
