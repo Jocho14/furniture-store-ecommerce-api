@@ -11,6 +11,7 @@ import { Review } from "../reviews/review.entity";
 import { ProductWarehouse } from "../products-warehouses/product-warehouse.entity";
 import { ProductCategory } from "../products-categories/product-category.entity";
 import { OrderProduct } from "../orders-products/order-product.entity";
+import { ClientFavouriteProduct } from "../clients-favourites-products/client-favourite-product.entity";
 
 @Entity("products")
 export class Product {
@@ -55,4 +56,10 @@ export class Product {
 
   @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
   orderProducts!: OrderProduct[];
+
+  @OneToMany(
+    () => ClientFavouriteProduct,
+    (favouriteProduct) => favouriteProduct.product
+  )
+  favouriteProducts!: ClientFavouriteProduct[];
 }

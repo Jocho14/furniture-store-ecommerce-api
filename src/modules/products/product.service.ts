@@ -153,7 +153,7 @@ export class ProductService {
       );
       await this.productCategoryService.saveProductCategory(
         productId,
-        categoryId
+        categoryId || 0
       );
 
       const imageFiles =
@@ -170,6 +170,8 @@ export class ProductService {
 
       return listProudctDto;
     } catch (error) {
+      console.log(error);
+      console.log("eee");
       return { error: "An error occurred" };
     }
   }
@@ -239,7 +241,7 @@ export class ProductService {
       await this.productCategoryService.deleteProductCategory(productId);
       await this.productCategoryService.saveProductCategory(
         productId,
-        categoryId
+        categoryId || 0
       );
 
       await this.imageService.deleteAllImages(productId);

@@ -11,6 +11,7 @@ import { ReviewModule } from "../reviews/review.module";
 import { UserModule } from "../users/user.module";
 import { OrderProductModule } from "../orders-products/order-product.module";
 import { ProductCategoryModule } from "../products-categories/product-category.module";
+import { ClientFavouriteProductModule } from "../clients-favourites-products/client-favourite-product.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ProductCategoryModule } from "../products-categories/product-category.m
     ReviewModule,
     UserModule,
     ProductCategoryModule,
+    ClientFavouriteProductModule,
   ],
   providers: [ProductService, ProductRepository],
   controllers: [ProductController],

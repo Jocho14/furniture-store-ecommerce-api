@@ -47,6 +47,7 @@ describe("ClientService", () => {
       user: {} as User,
       orders: [],
       reviews: [],
+      favouriteProducts: [],
     };
     const mockUser = {
       first_name: "Jan",

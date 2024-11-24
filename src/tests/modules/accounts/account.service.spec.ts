@@ -49,6 +49,7 @@ describe("AccountService", () => {
       user: {} as User,
       orders: [],
       reviews: [],
+      favouriteProducts: [],
     };
     const mockUser = {
       first_name: "Jan",
@@ -93,6 +94,7 @@ describe("AccountService", () => {
       user: {} as User,
       orders: [],
       reviews: [],
+      favouriteProducts: [],
     };
     const mockUser = {
       first_name: "Jan",
@@ -139,6 +141,7 @@ describe("AccountService", () => {
       user: {} as User,
       orders: [],
       reviews: [],
+      favouriteProducts: [],
     };
     const mockUser = {
       first_name: "Jan",

@@ -9,6 +9,7 @@ import {
 import { User } from "../users/user.entity";
 import { Review } from "../reviews/review.entity";
 import { Order } from "../orders/order.entity";
+import { ClientFavouriteProduct } from "../clients-favourites-products/client-favourite-product.entity";
 
 @Entity("clients")
 export class Client {
@@ -30,4 +31,10 @@ export class Client {
 
   @OneToMany(() => Order, (order) => order.client, { cascade: true })
   orders!: Order[];
+
+  @OneToMany(
+    () => ClientFavouriteProduct,
+    (favouriteProduct) => favouriteProduct.client
+  )
+  favouriteProducts!: ClientFavouriteProduct[];
 }

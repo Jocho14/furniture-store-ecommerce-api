@@ -18,10 +18,10 @@ export class CategoryRepository {
     return category ? category.name : "";
   }
 
-  async getCategoryId(name: string): Promise<number> {
+  async getCategoryId(name: string): Promise<number | null> {
     const category = await this.repository.findOne({
       where: { name },
     });
-    return category ? category.category_id : -1;
+    return category ? category.category_id : null;
   }
 }

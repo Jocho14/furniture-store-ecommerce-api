@@ -7,6 +7,9 @@ import { ReviewService } from "../../../modules/reviews/review.service";
 import { UserService } from "../../../modules/users/user.service";
 import { AuthenticatedUser } from "../../../auth/interface/IAuth";
 import { ProductCategoryService } from "../../../modules/products-categories/product-category.service";
+import { ClientFavouriteProductService } from "../../../modules/clients-favourites-products/client-favourite-product.service";
+import { CategoryService } from "../../../modules/categories/category.service";
+import { CategoryRepository } from "../../../modules/categories/category.repository";
 
 describe("ProductService", () => {
   let productService: ProductService;
@@ -16,6 +19,9 @@ describe("ProductService", () => {
   let reviewService: ReviewService;
   let userService: UserService;
   let productCategoryService: ProductCategoryService;
+  let categoryService: CategoryService;
+  let clientFavouriteProductService: ClientFavouriteProductService;
+  let categoryRepository: CategoryRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,7 +53,20 @@ describe("ProductService", () => {
           provide: ProductCategoryService,
           useValue: {
             getCategory: jest.fn(),
+            saveProductCategory: jest.fn().mockResolvedValue(undefined),
+            deleteProductCategory: jest.fn().mockResolvedValue(undefined),
           },
+        },
+        {
+          provide: CategoryService,
+          useValue: {
+            getName: jest.fn().mockResolvedValue("Category 1"),
+            getIdByName: jest.fn().mockResolvedValue(1),
+          },
+        },
+        {
+          provide: ClientFavouriteProductService,
+          useValue: {},
         },
         {
           provide: ProductWarehouseService,
@@ -70,6 +89,12 @@ describe("ProductService", () => {
             getClientId: jest.fn(),
           },
         },
+        {
+          provide: CategoryRepository,
+          useValue: {
+            findOne: jest.fn().mockResolvedValue({ id: 1, name: "Category 1" }),
+          },
+        },
       ],
     }).compile();
 
@@ -84,6 +109,11 @@ describe("ProductService", () => {
     productCategoryService = module.get<ProductCategoryService>(
       ProductCategoryService
     );
+    categoryService = module.get<CategoryService>(CategoryService);
+    clientFavouriteProductService = module.get<ClientFavouriteProductService>(
+      ClientFavouriteProductService
+    );
+    categoryRepository = module.get<CategoryRepository>(CategoryRepository);
   });
 
   it("should be defined", () => {
@@ -103,6 +133,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
 
@@ -149,6 +180,7 @@ describe("ProductService", () => {
       productWarehouses: [],
       orderProducts: [],
       productCategories: [],
+      favouriteProducts: [],
     };
 
     const mockImages = [
@@ -197,6 +229,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
     const mockThumbnail = {
@@ -242,6 +275,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
     const mockThumbnail = {
@@ -286,7 +320,7 @@ describe("ProductService", () => {
       description: "Description",
       quantity: 10,
       images: [{ originalname: "file1.jpg" }] as Express.Multer.File[],
-      category: "",
+      category: "Category 1",
     };
     const mockProductId = 1;
     const mockImageUrls = ["url1.jpg"];
@@ -295,6 +329,7 @@ describe("ProductService", () => {
     jest
       .spyOn(productWarehouseService, "setQuantity")
       .mockResolvedValue(undefined);
+    jest.spyOn(categoryService, "getIdByName").mockResolvedValue(1);
     jest.spyOn(imageService, "uploadImages").mockResolvedValue(mockImageUrls);
 
     const result = await productService.add(mockProductDto);
@@ -318,6 +353,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
     const mockImageUrls = ["url1.jpg"];
@@ -350,6 +386,7 @@ describe("ProductService", () => {
       productWarehouses: [],
       orderProducts: [],
       productCategories: [],
+      favouriteProducts: [],
     };
     const mockImageUrls = ["url1.jpg"];
     const mockQuantity = 10;
@@ -379,10 +416,11 @@ describe("ProductService", () => {
       description: "Description",
       quantity: 10,
       images: [{ originalname: "file1.jpg" }] as Express.Multer.File[],
-      category: "",
+      category: "Category 1",
     };
     const mockImageUrls = ["url1.jpg"];
 
+    jest.spyOn(categoryService, "getIdByName").mockResolvedValue(1);
     jest.spyOn(imageService, "deleteAllImages").mockResolvedValue(undefined);
     jest.spyOn(imageService, "uploadImages").mockResolvedValue(mockImageUrls);
     jest
@@ -410,6 +448,7 @@ describe("ProductService", () => {
       productWarehouses: [],
       orderProducts: [],
       productCategories: [],
+      favouriteProducts: [],
     };
     const mockThumbnail = {
       image_id: 1,
@@ -493,6 +532,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
 
@@ -515,6 +555,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
 
@@ -537,6 +578,7 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
     const mockThumbnail = {
@@ -577,6 +619,8 @@ describe("ProductService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
+        category: "Category 1",
       },
     ];
     const mockThumbnail = {
@@ -600,7 +644,7 @@ describe("ProductService", () => {
         name: "Product 1",
         price: 100,
         thumbnailUrl: "thumbnail.jpg",
-        category: "",
+        category: undefined,
         averageRating: 0,
       },
     ]);

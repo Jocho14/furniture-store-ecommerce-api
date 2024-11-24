@@ -14,6 +14,7 @@ import { OrderProductModule } from "./modules/orders-products/order-product.modu
 import { OrderModule } from "./modules/orders/order.module";
 import { ShippingAddressModule } from "./modules/shipping-addresses/shipping-address.module";
 import { ProductCategoryModule } from "./modules/products-categories/product-category.module";
+import { ClientFavouriteProductModule } from "./modules/clients-favourites-products/client-favourite-product.module";
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ dotenv.config();
     OrderProductModule,
     OrderModule,
     ShippingAddressModule,
+    ClientFavouriteProductModule,
   ],
 })
 export class AppModule {}

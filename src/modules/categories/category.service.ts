@@ -25,7 +25,7 @@ export class CategoryService {
     return this.categoryRepository.getCategoryName(id);
   }
 
-  async getIdByName(name: string): Promise<number> {
+  async getIdByName(name: string): Promise<number | null> {
     return this.categoryRepository.getCategoryId(name);
   }
 }

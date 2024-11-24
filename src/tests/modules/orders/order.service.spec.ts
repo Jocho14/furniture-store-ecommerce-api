@@ -138,6 +138,7 @@ describe("OrderService", () => {
         productWarehouses: [],
         orderProducts: [],
         productCategories: [],
+        favouriteProducts: [],
       },
     ];
 
