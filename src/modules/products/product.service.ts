@@ -364,4 +364,17 @@ export class ProductService {
 
     return listProducts;
   }
+
+  async getProductForOrder(id: number): Promise<any> {
+    const product = await this.productRepository.getById(id);
+    if (!product) {
+      return [];
+    }
+    const thumbnail = await this.imageService.getThumbnailForProduct(id);
+    return {
+      productId: product.product_id,
+      name: product.name,
+      thumbnailUrl: thumbnail?.url || "null",
+    };
+  }
 }

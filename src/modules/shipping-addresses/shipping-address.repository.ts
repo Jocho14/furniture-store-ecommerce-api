@@ -15,4 +15,12 @@ export class ShippingAddressRepository {
   async create(shippingAddress: ShippingAddress): Promise<ShippingAddress> {
     return await this.repository.save(shippingAddress);
   }
+
+  async getShippingAddress(
+    shippingAddressId: number
+  ): Promise<ShippingAddress | null> {
+    return await this.repository.findOne({
+      where: { shipping_address_id: shippingAddressId },
+    });
+  }
 }

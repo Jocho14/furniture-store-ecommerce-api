@@ -21,4 +21,8 @@ export class GuestService {
   async getEmail(guestId: number): Promise<string | undefined> {
     return await this.guestRepository.getEmail(guestId);
   }
+
+  async getGuest(guestId: number): Promise<Guest | null> {
+    return await this.guestRepository.getGuest(guestId);
+  }
 }

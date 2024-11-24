@@ -22,4 +22,12 @@ export class ShippingAddressService {
     );
     return await this.shippingAddressRepository.create(shippingAddress);
   }
+
+  async getShippingAddress(
+    shippingAddressId: number
+  ): Promise<ShippingAddress | null> {
+    return await this.shippingAddressRepository.getShippingAddress(
+      shippingAddressId
+    );
+  }
 }

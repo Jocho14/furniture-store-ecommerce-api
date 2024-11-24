@@ -26,4 +26,11 @@ export class AccountRepository {
   async createAccount(account: Account): Promise<Account> {
     return await this.repository.save(account);
   }
+
+  async getEmail(userId: number): Promise<string | null> {
+    const account = await this.repository.findOne({
+      where: { user_id: userId },
+    });
+    return account ? account.email : null;
+  }
 }

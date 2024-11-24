@@ -11,6 +11,8 @@ import { OrderProduct } from "../../../modules/orders-products/order-product.ent
 import { EmployeeOrderPreviewDto } from "../../../modules/orders/DTO/employeeOrderPreview.dto";
 import { ShippingAddress } from "../../../modules/shipping-addresses/shipping-address.entity";
 import { OrderStatus } from "../../../modules/orders/enum/orderStatus";
+import { UserService } from "../../../modules/users/user.service";
+import { ClientService } from "../../../modules/clients/client.service";
 
 describe("OrderService", () => {
   let service: OrderService;
@@ -19,6 +21,8 @@ describe("OrderService", () => {
   let shippingAddressService: ShippingAddressService;
   let productService: ProductService;
   let orderProductService: OrderProductService;
+  let userService: UserService;
+  let clientService: ClientService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +57,19 @@ describe("OrderService", () => {
           },
         },
         {
+          provide: UserService,
+          useValue: {
+            getUserOrderInfo: jest.fn(),
+            getAccountEmail: jest.fn(),
+          },
+        },
+        {
+          provide: ClientService,
+          useValue: {
+            getUserId: jest.fn(),
+          },
+        },
+        {
           provide: OrderProductService,
           useValue: {
             createOrderProduct: jest.fn(),
@@ -70,6 +87,8 @@ describe("OrderService", () => {
     );
     productService = module.get<ProductService>(ProductService);
     orderProductService = module.get<OrderProductService>(OrderProductService);
+    userService = module.get<UserService>(UserService);
+    clientService = module.get<ClientService>(ClientService);
   });
 
   it("should be defined", () => {

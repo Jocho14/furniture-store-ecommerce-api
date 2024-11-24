@@ -10,6 +10,12 @@ import { Order } from "./order.entity";
 import { LineItemDto } from "./DTO/lineItem.dto";
 import { OrderProduct } from "../orders-products/order-product.entity";
 import { EmployeeOrderPreviewDto } from "./DTO/employeeOrderPreview.dto";
+import { EmployeeOrderManageDto } from "./DTO/employeeOrderManage.dto";
+import { UserService } from "../users/user.service";
+import { ClientService } from "../clients/client.service";
+import { ExtendedPreviewProductDto } from "../products/DTO/extendedPreviewProduct.dto";
+import { UserOrderInfoDto } from "../users/DTO/userOrderInfo.dto";
+import { ShippingAddressOrderDto } from "../shipping-addresses/DTO/createShippingAddress.dto";
 
 @Injectable()
 export class OrderService {
@@ -18,7 +24,9 @@ export class OrderService {
     private readonly guestService: GuestService,
     private readonly shippingAddressService: ShippingAddressService,
     private readonly productService: ProductService,
-    private readonly orderProductService: OrderProductService
+    private readonly orderProductService: OrderProductService,
+    private readonly userService: UserService,
+    private readonly clientService: ClientService
   ) {}
 
   async createGuestOrder(
@@ -101,5 +109,100 @@ export class OrderService {
       })
     );
     return previews;
+  }
+
+  async getManageOrder(
+    orderId: number
+  ): Promise<EmployeeOrderManageDto | null> {
+    const order = await this.orderRepository.getOrder(orderId);
+    if (!order) {
+      return null;
+    }
+    const employeeOrderManageDto = new EmployeeOrderManageDto();
+    const userOrderInfoDto = new UserOrderInfoDto();
+    const shippingAddressOrderDto = new ShippingAddressOrderDto();
+
+    employeeOrderManageDto.customer = userOrderInfoDto;
+    employeeOrderManageDto.shipping = shippingAddressOrderDto;
+
+    employeeOrderManageDto.status = order.status;
+    employeeOrderManageDto.date = order.order_date;
+
+    if (order.client_id !== null) {
+      employeeOrderManageDto.customer.type = "Client";
+      const userId = await this.clientService.getUserId(order.client_id);
+      if (userId === null) {
+        return null;
+      }
+      const user = await this.userService.getUserOrderInfo(userId);
+      if (user === null) {
+        return null;
+      }
+
+      employeeOrderManageDto.customer.firstName = user.first_name;
+      employeeOrderManageDto.customer.lastName = user.last_name;
+
+      const email = await this.userService.getAccountEmail(userId);
+      employeeOrderManageDto.customer.email = email || "";
+
+      employeeOrderManageDto.customer.phoneNumber = user.phone_number;
+    } else {
+      employeeOrderManageDto.customer.type = "Guest";
+      if (order.guest_id === null) {
+        return null;
+      }
+      const guest = await this.guestService.getGuest(order.guest_id);
+      if (guest === null) {
+        return null;
+      }
+
+      employeeOrderManageDto.customer.firstName = guest.first_name;
+      employeeOrderManageDto.customer.lastName = guest.last_name;
+      employeeOrderManageDto.customer.email = guest.email;
+      employeeOrderManageDto.customer.phoneNumber = guest.phone_number;
+    }
+
+    const shippingAddress =
+      await this.shippingAddressService.getShippingAddress(
+        order.shipping_address_id
+      );
+
+    if (shippingAddress === null) {
+      return null;
+    }
+
+    employeeOrderManageDto.shipping.streetAddress =
+      shippingAddress.street_address;
+    employeeOrderManageDto.shipping.houseNumber = shippingAddress.house_number;
+    employeeOrderManageDto.shipping.apartmentNumber =
+      shippingAddress.apartment_number;
+    employeeOrderManageDto.shipping.postalCode = shippingAddress.postal_code;
+    employeeOrderManageDto.shipping.city = shippingAddress.city;
+
+    const products = await this.orderProductService.getProducts(orderId);
+
+    const orderProducts = await Promise.all(
+      products.map(async (product) => {
+        const productInfo = await this.productService.getProductForOrder(
+          product.product_id
+        );
+        if (productInfo === null) {
+          return null;
+        }
+        return {
+          product_id: product.product_id,
+          name: productInfo.name,
+          thumbnailUrl: productInfo.thumbnailUrl,
+          price: product.product_price,
+          quantity: product.quantity,
+        };
+      })
+    );
+
+    employeeOrderManageDto.products = orderProducts.filter(
+      (product) => product !== null
+    );
+
+    return employeeOrderManageDto;
   }
 }

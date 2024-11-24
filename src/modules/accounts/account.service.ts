@@ -30,4 +30,8 @@ export class AccountService {
     );
     return await this.accountRepository.createAccount(account);
   }
+
+  async getEmail(userId: number): Promise<string | null> {
+    return await this.accountRepository.getEmail(userId);
+  }
 }

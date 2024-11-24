@@ -11,6 +11,7 @@ import { OrderController } from "./order.controller";
 import { OrderRepository } from "./order.repository";
 import { OrderProductModule } from "../orders-products/order-product.module";
 import { ProductModule } from "../products/product.module";
+import { UserModule } from "../users/user.module";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ProductModule } from "../products/product.module";
     ShippingAddressModule,
     OrderProductModule,
     ProductModule,
+    UserModule,
   ],
   providers: [OrderService, OrderRepository],
   controllers: [OrderController],

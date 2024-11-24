@@ -25,4 +25,9 @@ export class UserRepository {
     const user = await this.repository.findOne({ where: { user_id: id } });
     return user ? user.first_name : null;
   }
+
+  async getUserInfo(id: number | null): Promise<User | null> {
+    if (!id) return null;
+    return await this.repository.findOne({ where: { user_id: id } });
+  }
 }

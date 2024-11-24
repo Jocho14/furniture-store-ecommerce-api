@@ -25,4 +25,12 @@ export class GuestRepository {
     });
     return guest ? guest.email : undefined;
   }
+
+  async getGuest(guestId: number): Promise<Guest | null> {
+    return await this.repository.findOne({
+      where: {
+        guest_id: guestId,
+      },
+    });
+  }
 }

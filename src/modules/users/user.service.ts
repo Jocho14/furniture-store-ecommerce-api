@@ -109,4 +109,12 @@ export class UserService {
       firstName || ""
     );
   }
+
+  async getUserOrderInfo(userId: number): Promise<User | null> {
+    return await this.userRepository.getUserInfo(userId);
+  }
+
+  async getAccountEmail(userId: number): Promise<string | null> {
+    return await this.accountService.getEmail(userId);
+  }
 }

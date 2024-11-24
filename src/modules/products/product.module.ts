@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Product } from "./product.entity";
 import { ProductService } from "./product.service";
@@ -16,14 +16,14 @@ import { ClientFavouriteProductModule } from "../clients-favourites-products/cli
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product]),
+    forwardRef(() => UserModule),
     ImageModule,
     ProductWarehouseModule,
     OrderProductModule,
+    forwardRef(() => ClientFavouriteProductModule),
     CategoryModule,
     ReviewModule,
-    UserModule,
     ProductCategoryModule,
-    ClientFavouriteProductModule,
   ],
   providers: [ProductService, ProductRepository],
   controllers: [ProductController],

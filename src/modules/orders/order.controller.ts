@@ -6,6 +6,7 @@ import { UseGuards } from "@nestjs/common";
 import { EmployeeGuard } from "../../auth/guards/employee.guard";
 import { CreateGuestOrderDto } from "./DTO/createGuestOrder.dto";
 import { EmployeeOrderPreviewDto } from "./DTO/employeeOrderPreview.dto";
+import { EmployeeOrderManageDto } from "./DTO/employeeOrderManage.dto";
 
 @Controller("Orders")
 export class OrderController {
@@ -35,5 +36,13 @@ export class OrderController {
   @Get(":id/guest-email")
   async getGuestEmail(@Param("id") id: number) {
     return await this.orderService.getGuestEmail(id);
+  }
+
+  @Get(":id/manage")
+  @UseGuards(EmployeeGuard)
+  async getManageOrder(
+    @Param("id") id: number
+  ): Promise<EmployeeOrderManageDto | null> {
+    return await this.orderService.getManageOrder(id);
   }
 }
