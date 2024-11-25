@@ -66,7 +66,8 @@ describe("OrderService", () => {
         {
           provide: ClientService,
           useValue: {
-            getUserId: jest.fn(),
+            getUserId: jest.fn().mockResolvedValue(1),
+            getUserFirstName: jest.fn().mockResolvedValue("Jan"),
           },
         },
         {

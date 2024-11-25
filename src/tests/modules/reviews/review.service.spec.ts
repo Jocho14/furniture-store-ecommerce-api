@@ -25,7 +25,8 @@ describe("ReviewService", () => {
         {
           provide: ClientService,
           useValue: {
-            getUserFirstName: jest.fn(),
+            getUserId: jest.fn().mockResolvedValue(1),
+            getUserFirstName: jest.fn().mockResolvedValue("Jan"),
           },
         },
       ],

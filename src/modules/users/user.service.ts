@@ -80,7 +80,8 @@ export class UserService {
     return await this.userRepository.getFirstName(id);
   }
 
-  async getClientId(userId: number): Promise<number | null> {
+  async getClientId(userId: number | null): Promise<number | null> {
+    if (!userId) return null;
     return await this.clientService.getClientId(userId);
   }
 
@@ -110,11 +111,13 @@ export class UserService {
     );
   }
 
-  async getUserOrderInfo(userId: number): Promise<User | null> {
+  async getUserOrderInfo(userId: number | null): Promise<User | null> {
+    if (!userId) return null;
     return await this.userRepository.getUserInfo(userId);
   }
 
-  async getAccountEmail(userId: number): Promise<string | null> {
+  async getAccountEmail(userId: number | null): Promise<string | null> {
+    if (!userId) return null;
     return await this.accountService.getEmail(userId);
   }
 }

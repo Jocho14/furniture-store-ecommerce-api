@@ -16,6 +16,8 @@ import { ClientService } from "../clients/client.service";
 import { ExtendedPreviewProductDto } from "../products/DTO/extendedPreviewProduct.dto";
 import { UserOrderInfoDto } from "../users/DTO/userOrderInfo.dto";
 import { ShippingAddressOrderDto } from "../shipping-addresses/DTO/createShippingAddress.dto";
+import { AuthenticatedUser } from "../../auth/interface/IAuth";
+import { CreateClientOrderDto } from "./DTO/createClientOrder.dto";
 
 @Injectable()
 export class OrderService {
@@ -79,6 +81,69 @@ export class OrderService {
     return createdOrder.order_id;
   }
 
+  async createClientOrder(
+    req: AuthenticatedUser,
+    createClientOrderDto: CreateClientOrderDto
+  ): Promise<number | null> {
+    if (req.user?.user_id === null) {
+      return null;
+    }
+
+    const client = await this.userService.getUserOrderInfo(
+      req.user?.user_id || null
+    );
+    if (client === null) {
+      return null;
+    }
+    const clientId = await this.userService.getClientId(
+      req.user?.user_id || null
+    );
+    if (clientId === null) return null;
+
+    const shippingAddress =
+      await this.shippingAddressService.createShippingAddress(
+        createClientOrderDto.shippingAddressDto
+      );
+
+    const products = await this.productService.getProducts(
+      createClientOrderDto.orderProductDtos.map((p) => p.productId)
+    );
+
+    let totalAmount = 0;
+    products?.forEach((product) => {
+      const productDto = createClientOrderDto.orderProductDtos.find(
+        (p) => p.productId === product.product_id
+      );
+      if (productDto) {
+        totalAmount += product.price * productDto.quantity;
+      }
+    });
+
+    const order = new Order(
+      shippingAddress.shipping_address_id,
+      totalAmount,
+      clientId,
+      null
+    );
+
+    const createdOrder = await this.orderRepository.create(order);
+
+    await Promise.all(
+      createClientOrderDto.orderProductDtos.map((productDto) =>
+        this.orderProductService.createOrderProduct({
+          orderId: createdOrder.order_id,
+          productId: productDto.productId,
+          productPrice: products?.find(
+            (p) => p.product_id === productDto.productId
+          )?.price,
+          quantity: productDto.quantity,
+        })
+      )
+    );
+
+    return createdOrder.order_id;
+  }
+
   async getOrder(orderId: number): Promise<Order | null> {
     return await this.orderRepository.getOrder(orderId);
   }
@@ -94,11 +159,31 @@ export class OrderService {
     return email;
   }
 
+  async getClientEmail(orderId: number): Promise<string | undefined> {
+    const order = await this.orderRepository.getOrder(orderId);
+    if (order === null) {
+      return undefined;
+    }
+
+    const clientId = order.client_id;
+    if (!clientId) return undefined;
+
+    const userId = await this.clientService.getUserId(clientId);
+    if (!userId) return undefined;
+
+    const email = await this.userService.getAccountEmail(userId);
+    return email ? email : undefined;
+  }
+
   async getEmployeePreviews(): Promise<EmployeeOrderPreviewDto[]> {
     const orders = await this.orderRepository.getAll();
     const previews = await Promise.all(
       orders.map(async (order) => {
-        const email = await this.guestService.getEmail(order.order_id);
+        const userId = await this.clientService.getUserId(order.client_id);
+        let email = order.guest_id
+          ? await this.guestService.getEmail(order.order_id)
+          : await this.userService.getAccountEmail(userId);
+        email = email || "";
         return {
           id: order.order_id,
           status: order.status,
