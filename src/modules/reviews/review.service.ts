@@ -17,9 +17,14 @@ export class ReviewService {
 
     const reviewsDto = await Promise.all(
       reviews.map(async (review) => {
+        const userId = await this.clientService.getUserId(review.client_id);
+        if (!userId) {
+          throw new Error("User ID not found");
+        }
         const clientFirstName = await this.clientService.getUserFirstName(
-          review.client_id
+          userId
         );
+        console.log("clientFirstName", clientFirstName);
 
         return {
           reviewId: review.review_id,
@@ -42,6 +47,7 @@ export class ReviewService {
     if (!clientId) {
       throw new Error("Client ID not found");
     }
+    console.log("add review client id: ", clientId);
     return await this.reviewRepository.addReview(
       productId,
       createReviewDto,

@@ -302,7 +302,9 @@ export class ProductService {
     if (!req.user) {
       return null;
     }
+    console.log("add review user id: ", req.user.user_id);
     const clientId = await this.userService.getClientId(req.user.user_id);
+    console.log("add review client id: ", clientId);
     return await this.reviewService.addReview(productId, body, clientId);
   }
 
