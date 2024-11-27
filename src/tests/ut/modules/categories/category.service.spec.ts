@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { CategoryService } from "../../../modules/categories/category.service";
-import { CategoryRepository } from "../../../modules/categories/category.repository";
-import { ImageService } from "../../../modules/images/image.service";
-import { MasonryDto } from "../../../modules/categories/DTO/masonry.dto";
+import { CategoryService } from "../../../../modules/categories/category.service";
+import { CategoryRepository } from "../../../../modules/categories/category.repository";
+import { ImageService } from "../../../../modules/images/image.service";
+import { MasonryDto } from "../../../../modules/categories/DTO/masonry.dto";
 
 describe("CategoryService", () => {
   let service: CategoryService;

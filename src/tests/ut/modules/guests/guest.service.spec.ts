@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { GuestService } from "../../../modules/guests/guest.service";
-import { GuestRepository } from "../../../modules/guests/guest.repository";
-import { CreateGuestDto } from "../../../modules/guests/DTO/createGuest.dto";
-import { Guest } from "../../../modules/guests/guest.entity";
+import { GuestService } from "../../../../modules/guests/guest.service";
+import { GuestRepository } from "../../../../modules/guests/guest.repository";
+import { CreateGuestDto } from "../../../../modules/guests/DTO/createGuest.dto";
+import { Guest } from "../../../../modules/guests/guest.entity";
 
 describe("GuestService", () => {
   let service: GuestService;

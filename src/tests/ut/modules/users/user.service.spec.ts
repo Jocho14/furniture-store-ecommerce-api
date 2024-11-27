@@ -1,15 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { UserService } from "../../../modules/users/user.service";
-import { UserRepository } from "../../../modules/users/user.repository";
-import { AccountService } from "../../../modules/accounts/account.service";
-import { ClientService } from "../../../modules/clients/client.service";
-import { EmployeeService } from "../../../modules/employees/employee.service";
-import { UserCreateDto } from "../../../modules/users/DTO/userCreate.dto";
-import { User } from "../../../modules/users/user.entity";
-import { Account } from "../../../modules/accounts/account.entity";
-import { Client } from "../../../modules/clients/client.entity";
-import { userRole } from "../../../auth/enum/userRole";
-import { AuthenticatedUser } from "../../../auth/interface/IAuth";
+import { UserService } from "../../../../modules/users/user.service";
+import { UserRepository } from "../../../../modules/users/user.repository";
+import { AccountService } from "../../../../modules/accounts/account.service";
+import { ClientService } from "../../../../modules/clients/client.service";
+import { EmployeeService } from "../../../../modules/employees/employee.service";
+import { UserCreateDto } from "../../../../modules/users/DTO/userCreate.dto";
+import { User } from "../../../../modules/users/user.entity";
+import { Account } from "../../../../modules/accounts/account.entity";
+import { Client } from "../../../../modules/clients/client.entity";
+import { userRole } from "../../../../auth/enum/userRole";
+import { AuthenticatedUser } from "../../../../auth/interface/IAuth";
 
 describe("UserService", () => {
   let userService: UserService;

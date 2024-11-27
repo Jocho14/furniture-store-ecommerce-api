@@ -1,0 +1,76 @@
+import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource, QueryRunner } from 'typeorm';
+import request from 'supertest';
+import * as dotenv from 'dotenv';
+
+import { ProductService } from '../../../modules/products/product.service';
+import { ProductController } from '../../../modules/products/product.controller';
+import { ProductRepository } from '../../../modules/products/product.repository';
+import { Product } from '../../../modules/products/product.entity';
+import { ProductModule } from '../../../modules/products/product.module';
+import { Image } from '../../../modules/images/image.entity';
+import { Review } from '../../../modules/reviews/review.entity';
+
+dotenv.config();
+
+describe('ProductController Integration Test', () => {
+  let app: INestApplication;
+  let service: ProductService;
+  let dataSource: DataSource;
+  let queryRunner: QueryRunner;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        ProductModule,
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          host: process.env.TEST_DB_HOST,
+          port: Number(process.env.TEST_DB_PORT),
+          username: process.env.TEST_DB_USER,
+          password: process.env.TEST_DB_PASSWORD,
+          database: process.env.TEST_DB_NAME,
+          entities: [__dirname + '../../../modules/**/*.entity{.ts,.js}'],
+          synchronize: false,
+        }),
+        TypeOrmModule.forFeature([Product]),
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+
+    service = moduleFixture.get<ProductService>(ProductService);
+    dataSource = moduleFixture.get<DataSource>(DataSource);
+  });
+
+  beforeEach(async () => {
+    queryRunner = dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+  });
+
+  afterEach(async () => {
+    if (queryRunner.isTransactionActive) {
+      await queryRunner.rollbackTransaction();
+    }
+    await queryRunner.release();
+  });
+
+  afterAll(async () => {
+    await app.close();
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+    }
+  });
+
+
+  it('should return product list', async () => {
+    const response = await request(app.getHttpServer())
+      .get('product/list')
+      .expect(404);
+
+    //expect(response.body.name).toBe('Test Entity');
+  });
+});

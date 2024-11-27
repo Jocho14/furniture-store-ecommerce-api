@@ -1,18 +1,18 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { OrderService } from "../../../modules/orders/order.service";
-import { OrderRepository } from "../../../modules/orders/order.repository";
-import { GuestService } from "../../../modules/guests/guest.service";
-import { ShippingAddressService } from "../../../modules/shipping-addresses/shipping-address.service";
-import { ProductService } from "../../../modules/products/product.service";
-import { OrderProductService } from "../../../modules/orders-products/order-product.service";
-import { CreateGuestOrderDto } from "../../../modules/orders/DTO/createGuestOrder.dto";
-import { Order } from "../../../modules/orders/order.entity";
-import { OrderProduct } from "../../../modules/orders-products/order-product.entity";
-import { EmployeeOrderPreviewDto } from "../../../modules/orders/DTO/employeeOrderPreview.dto";
-import { ShippingAddress } from "../../../modules/shipping-addresses/shipping-address.entity";
-import { OrderStatus } from "../../../modules/orders/enum/orderStatus";
-import { UserService } from "../../../modules/users/user.service";
-import { ClientService } from "../../../modules/clients/client.service";
+import { OrderService } from "../../../../modules/orders/order.service";
+import { OrderRepository } from "../../../../modules/orders/order.repository";
+import { GuestService } from "../../../../modules/guests/guest.service";
+import { ShippingAddressService } from "../../../../modules/shipping-addresses/shipping-address.service";
+import { ProductService } from "../../../../modules/products/product.service";
+import { OrderProductService } from "../../../../modules/orders-products/order-product.service";
+import { CreateGuestOrderDto } from "../../../../modules/orders/DTO/createGuestOrder.dto";
+import { Order } from "../../../../modules/orders/order.entity";
+import { OrderProduct } from "../../../../modules/orders-products/order-product.entity";
+import { EmployeeOrderPreviewDto } from "../../../../modules/orders/DTO/employeeOrderPreview.dto";
+import { ShippingAddress } from "../../../../modules/shipping-addresses/shipping-address.entity";
+import { OrderStatus } from "../../../../modules/orders/enum/orderStatus";
+import { UserService } from "../../../../modules/users/user.service";
+import { ClientService } from "../../../../modules/clients/client.service";
 
 describe("OrderService", () => {
   let service: OrderService;

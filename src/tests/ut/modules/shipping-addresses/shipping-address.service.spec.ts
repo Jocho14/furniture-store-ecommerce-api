@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ShippingAddressService } from "../../../modules/shipping-addresses/shipping-address.service";
-import { ShippingAddressRepository } from "../../../modules/shipping-addresses/shipping-address.repository";
-import { CreateShippingAddressDto } from "../../../modules/shipping-addresses/DTO/createShippingAddress.dto";
-import { ShippingAddress } from "../../../modules/shipping-addresses/shipping-address.entity";
+import { ShippingAddressService } from "../../../../modules/shipping-addresses/shipping-address.service";
+import { ShippingAddressRepository } from "../../../../modules/shipping-addresses/shipping-address.repository";
+import { CreateShippingAddressDto } from "../../../../modules/shipping-addresses/DTO/createShippingAddress.dto";
+import { ShippingAddress } from "../../../../modules/shipping-addresses/shipping-address.entity";
 
 describe("ShippingAddressService", () => {
   let service: ShippingAddressService;

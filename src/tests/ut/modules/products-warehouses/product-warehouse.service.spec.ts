@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ProductWarehouseService } from "../../../modules/products-warehouses/product-warehouse.service";
-import { ProductWarehouseRepository } from "../../../modules/products-warehouses/product-warehouse.repository";
-import { ProductWarehouse } from "../../../modules/products-warehouses/product-warehouse.entity";
+import { ProductWarehouseService } from "../../../../modules/products-warehouses/product-warehouse.service";
+import { ProductWarehouseRepository } from "../../../../modules/products-warehouses/product-warehouse.repository";
+import { ProductWarehouse } from "../../../../modules/products-warehouses/product-warehouse.entity";
 
 describe("ProductWarehouseService", () => {
   let service: ProductWarehouseService;

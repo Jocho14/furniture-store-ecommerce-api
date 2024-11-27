@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ClientService } from "../../../modules/clients/client.service";
-import { ClientRepository } from "../../../modules/clients/client.repository";
-import { UserService } from "../../../modules/users/user.service";
-import { Client } from "../../../modules/clients/client.entity";
-import { User } from "../../../modules/users/user.entity";
-import { Account } from "../../../modules/accounts/account.entity";
+import { ClientService } from "../../../../modules/clients/client.service";
+import { ClientRepository } from "../../../../modules/clients/client.repository";
+import { UserService } from "../../../../modules/users/user.service";
+import { Client } from "../../../../modules/clients/client.entity";
+import { User } from "../../../../modules/users/user.entity";
+import { Account } from "../../../../modules/accounts/account.entity";
 
 describe("ClientService", () => {
   let service: ClientService;

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { AccountService } from "../../../modules/accounts/account.service";
-import { AccountRepository } from "../../../modules/accounts/account.repository";
-import { AuthService } from "../../../auth/auth.service";
-import { Account } from "../../../modules/accounts/account.entity";
-import { Employee } from "../../../modules/employees/employee.entity";
-import { User } from "../../../modules/users/user.entity";
+import { AccountService } from "../../../../modules/accounts/account.service";
+import { AccountRepository } from "../../../../modules/accounts/account.repository";
+import { AuthService } from "../../../../auth/auth.service";
+import { Account } from "../../../../modules/accounts/account.entity";
+import { Employee } from "../../../../modules/employees/employee.entity";
+import { User } from "../../../../modules/users/user.entity";
 
 describe("AccountService", () => {
   let service: AccountService;

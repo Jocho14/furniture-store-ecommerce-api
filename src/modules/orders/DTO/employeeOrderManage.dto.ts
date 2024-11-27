@@ -9,6 +9,10 @@ export class EmployeeOrderManageDto {
   @IsNotEmpty()
   status!: string;
 
+  @IsNumber()
+  @IsNotEmpty()
+  totalAmount!: number;
+
   @IsString()
   @IsNotEmpty()
   date!: Date;

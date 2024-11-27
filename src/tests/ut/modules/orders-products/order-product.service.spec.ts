@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { OrderProductService } from "../../../modules/orders-products/order-product.service";
-import { OrderProductRepository } from "../../../modules/orders-products/order-product.repository";
-import { CreateOrderProductDto } from "../../../modules/orders-products/DTO/createOrderProduct.dto";
-import { OrderProduct } from "../../../modules/orders-products/order-product.entity";
+import { OrderProductService } from "../../../../modules/orders-products/order-product.service";
+import { OrderProductRepository } from "../../../../modules/orders-products/order-product.repository";
+import { CreateOrderProductDto } from "../../../../modules/orders-products/DTO/createOrderProduct.dto";
+import { OrderProduct } from "../../../../modules/orders-products/order-product.entity";
 
 describe("OrderProductService", () => {
   let service: OrderProductService;

@@ -18,6 +18,7 @@ import { UserOrderInfoDto } from "../users/DTO/userOrderInfo.dto";
 import { ShippingAddressOrderDto } from "../shipping-addresses/DTO/createShippingAddress.dto";
 import { AuthenticatedUser } from "../../auth/interface/IAuth";
 import { CreateClientOrderDto } from "./DTO/createClientOrder.dto";
+import { OrderStatus } from "./enum/orderStatus";
 
 @Injectable()
 export class OrderService {
@@ -79,6 +80,10 @@ export class OrderService {
     );
 
     return createdOrder.order_id;
+  }
+
+  async completeOrder(orderId: number) {
+    return await this.orderRepository.completeOrder(orderId);
   }
 
   async createClientOrder(
@@ -181,7 +186,7 @@ export class OrderService {
       orders.map(async (order) => {
         const userId = await this.clientService.getUserId(order.client_id);
         let email = order.guest_id
-          ? await this.guestService.getEmail(order.order_id)
+          ? await this.guestService.getEmail(order.guest_id)
           : await this.userService.getAccountEmail(userId);
         email = email || "";
         return {
@@ -206,6 +211,8 @@ export class OrderService {
     const employeeOrderManageDto = new EmployeeOrderManageDto();
     const userOrderInfoDto = new UserOrderInfoDto();
     const shippingAddressOrderDto = new ShippingAddressOrderDto();
+
+    employeeOrderManageDto.totalAmount = order.total_amount;
 
     employeeOrderManageDto.customer = userOrderInfoDto;
     employeeOrderManageDto.shipping = shippingAddressOrderDto;
@@ -289,5 +296,15 @@ export class OrderService {
     );
 
     return employeeOrderManageDto;
+  }
+
+  async cancelOrder(orderId: number) {
+    const order = await this.orderRepository.getOrder(orderId);
+    if (!order) {
+      return;
+    }
+    if(order.status === OrderStatus.PENDING) {
+      await this.orderRepository.cancelOrder(orderId);
+    }
   }
 }

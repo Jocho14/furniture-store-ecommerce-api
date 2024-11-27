@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ImageService } from "../../../modules/images/image.service";
-import { ImageRepository } from "../../../modules/images/image.repository";
+import { ImageService } from "../../../../modules/images/image.service";
+import { ImageRepository } from "../../../../modules/images/image.repository";
 
 import {
   ref,
@@ -10,8 +10,8 @@ import {
   deleteObject,
   getStorage,
 } from "firebase/storage";
-import { ImageDto } from "../../../modules/images/DTO/image.dto";
-import { Image } from "../../../modules/images/image.entity";
+import { ImageDto } from "../../../../modules/images/DTO/image.dto";
+import { Image } from "../../../../modules/images/image.entity";
 import { Readable } from "stream";
 
 jest.mock("firebase/storage", () => ({

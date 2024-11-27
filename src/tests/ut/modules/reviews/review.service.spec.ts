@@ -1,10 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ReviewService } from "../../../modules/reviews/review.service";
-import { ReviewRepository } from "../../../modules/reviews/review.repository";
-import { ClientService } from "../../../modules/clients/client.service";
-import { GetReviewDto } from "../../../modules/reviews/DTO/getReview.dto";
-import { CreateReviewDto } from "../../../modules/reviews/DTO/createReview.dto";
-import { Review } from "../../../modules/reviews/review.entity";
+import { ReviewService } from "../../../../modules/reviews/review.service";
+import { ReviewRepository } from "../../../../modules/reviews/review.repository";
+import { ClientService } from "../../../../modules/clients/client.service";
+import { GetReviewDto } from "../../../../modules/reviews/DTO/getReview.dto";
+import { CreateReviewDto } from "../../../../modules/reviews/DTO/createReview.dto";
+import { Review } from "../../../../modules/reviews/review.entity";
 
 describe("ReviewService", () => {
   let reviewService: ReviewService;

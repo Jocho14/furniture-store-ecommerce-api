@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject, forwardRef } from "@nestjs/common";
 import { UserRepository } from "./user.repository";
 import { User } from "./user.entity";
 import { UserCreateDto, EmployeeCreateDto } from "./DTO/userCreate.dto";
@@ -20,6 +20,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly accountService: AccountService,
+    @Inject(forwardRef(() => ClientService))
     private readonly clientService: ClientService,
     private readonly employeeService: EmployeeService
   ) {}

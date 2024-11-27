@@ -1,15 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { ProductService } from "../../../modules/products/product.service";
-import { ProductRepository } from "../../../modules/products/product.repository";
-import { ImageService } from "../../../modules/images/image.service";
-import { ProductWarehouseService } from "../../../modules/products-warehouses/product-warehouse.service";
-import { ReviewService } from "../../../modules/reviews/review.service";
-import { UserService } from "../../../modules/users/user.service";
-import { AuthenticatedUser } from "../../../auth/interface/IAuth";
-import { ProductCategoryService } from "../../../modules/products-categories/product-category.service";
-import { ClientFavouriteProductService } from "../../../modules/clients-favourites-products/client-favourite-product.service";
-import { CategoryService } from "../../../modules/categories/category.service";
-import { CategoryRepository } from "../../../modules/categories/category.repository";
+import { ProductService } from "../../../../modules/products/product.service";
+import { ProductRepository } from "../../../../modules/products/product.repository";
+import { ImageService } from "../../../../modules/images/image.service";
+import { ProductWarehouseService } from "../../../../modules/products-warehouses/product-warehouse.service";
+import { ReviewService } from "../../../../modules/reviews/review.service";
+import { UserService } from "../../../../modules/users/user.service";
+import { AuthenticatedUser } from "../../../../auth/interface/IAuth";
+import { ProductCategoryService } from "../../../../modules/products-categories/product-category.service";
+import { ClientFavouriteProductService } from "../../../../modules/clients-favourites-products/client-favourite-product.service";
+import { CategoryService } from "../../../../modules/categories/category.service";
+import { CategoryRepository } from "../../../../modules/categories/category.repository";
 
 describe("ProductService", () => {
   let productService: ProductService;

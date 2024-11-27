@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Param, Req } from "@nestjs/common";
+import { Body, Controller, Post, Get, Param, Req, Put } from "@nestjs/common";
 
 import { OrderService } from "./order.service";
 
@@ -35,6 +35,11 @@ export class OrderController {
     return await this.orderService.createClientOrder(req, createClientOrderDto);
   }
 
+  @Post(":id/complete")
+  async completeOrder(@Param("id") id: number) {
+    return await this.orderService.completeOrder(id);
+  }
+
   @Get(":id")
   async getOrder(@Param("id") id: number) {
     return await this.orderService.getOrder(id);
@@ -61,5 +66,12 @@ export class OrderController {
     @Param("id") id: number
   ): Promise<EmployeeOrderManageDto | null> {
     return await this.orderService.getManageOrder(id);
+  }
+
+  @Put(":id/cancel")
+  @UseGuards(EmployeeGuard)
+  async cancelOrder(@Param("id") id: number) {
+    console.log("cancelOrder");
+    return await this.orderService.cancelOrder(id);
   }
 }

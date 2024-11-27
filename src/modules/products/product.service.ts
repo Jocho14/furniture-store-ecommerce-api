@@ -344,7 +344,9 @@ export class ProductService {
   }
 
   async getList(): Promise<listProudctDto[]> {
+    console.log("shit 1");
     const products = await this.productRepository.getAll();
+    console.log("shit 2");
     const listProducts = await Promise.all(
       products.map(async (product) => {
         const thumbnail = await this.imageService.getThumbnailForProduct(
@@ -363,7 +365,7 @@ export class ProductService {
         };
       })
     );
-
+    console.log("shit 3");
     return listProducts;
   }
 
