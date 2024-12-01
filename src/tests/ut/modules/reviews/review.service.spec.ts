@@ -11,7 +11,7 @@ describe("ReviewService", () => {
   let reviewRepository: ReviewRepository;
   let clientService: ClientService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ReviewService,
@@ -35,6 +35,10 @@ describe("ReviewService", () => {
     reviewService = module.get<ReviewService>(ReviewService);
     reviewRepository = module.get<ReviewRepository>(ReviewRepository);
     clientService = module.get<ClientService>(ClientService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should return an array of GetReviewDto", async () => {

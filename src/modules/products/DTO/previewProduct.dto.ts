@@ -4,9 +4,9 @@ import { BaseProductDto } from "./baseProduct.dto";
 
 export class PreviewProductDto extends BaseProductDto {
   @IsNumber()
-  readonly productId?: number;
+  productId?: number;
 
   @IsString()
   @IsNotEmpty()
-  readonly thumbnailUrl!: string;
+  thumbnailUrl!: string;
 }

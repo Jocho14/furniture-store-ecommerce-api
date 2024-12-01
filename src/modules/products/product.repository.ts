@@ -50,4 +50,8 @@ export class ProductRepository {
       take: 20,
     });
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

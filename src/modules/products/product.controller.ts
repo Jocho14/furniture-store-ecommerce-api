@@ -51,6 +51,7 @@ export class ProductController {
   @Get("all-with-thumbnails")
   @UseGuards(EmployeeGuard)
   async getAllWithThumbnails() {
+    console.log("entered")
     return await this.productService.getAllWithThumbnails();
   }
 

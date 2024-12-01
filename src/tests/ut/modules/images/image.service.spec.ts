@@ -27,7 +27,7 @@ describe("ImageService", () => {
   let service: ImageService;
   let repository: ImageRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImageService,
@@ -46,6 +46,10 @@ describe("ImageService", () => {
 
     service = module.get<ImageService>(ImageService);
     repository = module.get<ImageRepository>(ImageRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {

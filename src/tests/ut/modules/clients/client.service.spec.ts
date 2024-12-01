@@ -11,7 +11,7 @@ describe("ClientService", () => {
   let clientRepository: ClientRepository;
   let userService: UserService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ClientService,
@@ -34,6 +34,10 @@ describe("ClientService", () => {
     service = module.get<ClientService>(ClientService);
     clientRepository = module.get<ClientRepository>(ClientRepository);
     userService = module.get<UserService>(UserService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {

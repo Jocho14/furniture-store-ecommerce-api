@@ -44,22 +44,22 @@ export class Product {
 
   @OneToMany(
     () => ProductWarehouse,
-    (productWarehouse) => productWarehouse.product
+    (productWarehouse) => productWarehouse.product, { cascade: true }
   )
   productWarehouses!: ProductWarehouse[];
 
   @OneToMany(
     () => ProductCategory,
-    (productCategory) => productCategory.product
+    (productCategory) => productCategory.product, { cascade: true }
   )
   productCategories!: ProductCategory[];
 
-  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product)
+  @OneToMany(() => OrderProduct, (orderProduct) => orderProduct.product, { cascade: true })
   orderProducts!: OrderProduct[];
 
   @OneToMany(
     () => ClientFavouriteProduct,
-    (favouriteProduct) => favouriteProduct.product
+    (favouriteProduct) => favouriteProduct.product, { cascade: true }
   )
   favouriteProducts!: ClientFavouriteProduct[];
 }

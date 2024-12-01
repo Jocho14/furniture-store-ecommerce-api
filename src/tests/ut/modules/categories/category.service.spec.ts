@@ -9,7 +9,7 @@ describe("CategoryService", () => {
   let categoryRepository: CategoryRepository;
   let imageService: ImageService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CategoryService,
@@ -31,6 +31,10 @@ describe("CategoryService", () => {
     service = module.get<CategoryService>(CategoryService);
     categoryRepository = module.get<CategoryRepository>(CategoryRepository);
     imageService = module.get<ImageService>(ImageService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {

@@ -7,7 +7,7 @@ describe("ProductWarehouseService", () => {
   let service: ProductWarehouseService;
   let repository: ProductWarehouseRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductWarehouseService,
@@ -27,6 +27,10 @@ describe("ProductWarehouseService", () => {
     repository = module.get<ProductWarehouseRepository>(
       ProductWarehouseRepository
     );
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {

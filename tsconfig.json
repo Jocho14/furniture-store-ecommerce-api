@@ -9,8 +9,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
   },
-  "include": ["src/**/*.ts", "src/server.ts"],
+  "include": ["src/**/*.ts", "src/server.ts", "src/tests/integration/modules/user.controller.spec.ts.w"],
   "exclude": ["node_modules"]
 }

@@ -23,7 +23,7 @@ describe("ProductService", () => {
   let clientFavouriteProductService: ClientFavouriteProductService;
   let categoryRepository: CategoryRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProductService,
@@ -114,6 +114,10 @@ describe("ProductService", () => {
       ClientFavouriteProductService
     );
     categoryRepository = module.get<CategoryRepository>(CategoryRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("should be defined", () => {

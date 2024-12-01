@@ -8,7 +8,7 @@ describe("ShippingAddressService", () => {
   let service: ShippingAddressService;
   let repository: ShippingAddressRepository;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShippingAddressService,
@@ -27,36 +27,38 @@ describe("ShippingAddressService", () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe("createShippingAddress", () => {
-    it("should create a new shipping address", async () => {
-      const createShippingAddressDto: CreateShippingAddressDto = {
-        streetAddress: "ul. 3 Maja",
-        houseNumber: "1",
-        city: "Wroclaw",
-        postalCode: "51-119",
-        apartmentNumber: "1",
-      };
+  it("should create a new shipping address", async () => {
+    const createShippingAddressDto: CreateShippingAddressDto = {
+      streetAddress: "ul. 3 Maja",
+      houseNumber: "1",
+      city: "Wroclaw",
+      postalCode: "51-119",
+      apartmentNumber: "1",
+    };
 
-      const shippingAddress = new ShippingAddress(
-        createShippingAddressDto.streetAddress,
-        createShippingAddressDto.houseNumber,
-        createShippingAddressDto.city,
-        createShippingAddressDto.postalCode,
-        createShippingAddressDto.apartmentNumber
-      );
+    const shippingAddress = new ShippingAddress(
+      createShippingAddressDto.streetAddress,
+      createShippingAddressDto.houseNumber,
+      createShippingAddressDto.city,
+      createShippingAddressDto.postalCode,
+      createShippingAddressDto.apartmentNumber
+    );
 
-      jest.spyOn(repository, "create").mockResolvedValue(shippingAddress);
+    jest.spyOn(repository, "create").mockResolvedValue(shippingAddress);
 
-      const result = await service.createShippingAddress(
-        createShippingAddressDto
-      );
+    const result = await service.createShippingAddress(
+      createShippingAddressDto
+    );
 
-      expect(result).toEqual(shippingAddress);
-      expect(repository.create).toHaveBeenCalledWith(shippingAddress);
-    });
+    expect(result).toEqual(shippingAddress);
+    expect(repository.create).toHaveBeenCalledWith(shippingAddress);
   });
 });

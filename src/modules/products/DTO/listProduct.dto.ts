@@ -5,9 +5,9 @@ import { PreviewProductDto } from "./previewProduct.dto";
 export class listProudctDto extends PreviewProductDto {
   @IsNumber()
   @IsNotEmpty()
-  readonly averageRating!: number;
+  averageRating!: number;
 
   @IsString()
   @IsNotEmpty()
-  readonly category!: string;
+  category!: string;
 }
