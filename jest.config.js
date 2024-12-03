@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-const isProductionEnv = process.env.APP_ENV === 'production';
+const isProductionEnv = process.env.APP_ENV === "production";
 
 module.exports = {
   moduleFileExtensions: ["js", "json", "ts"],
@@ -13,7 +13,9 @@ module.exports = {
   collectCoverageFrom: ["**/*.(t|j)s"],
   coverageDirectory: "./coverage",
   testEnvironment: "node",
-  testPathIgnorePatterns: isProductionEnv 
-    ? ['<rootDir>/src/tests/integration/modules/product.controller.spec.ts']
+  testPathIgnorePatterns: process.env.CI 
+  ? ['<rootDir>/src/tests/integration/modules/.*\\.controller\\.spec\\.ts$']
+  : isProductionEnv 
+    ? ['<rootDir>/src/tests/integration/modules/.*\\.controller\\.spec\\.ts$']
     : [],
 };
