@@ -30,9 +30,9 @@ dotenv.config();
       entities: [__dirname + "/../modules/**/*.entity{.ts,.js}"],
       autoLoadEntities: true,
       synchronize: false, // set to false in production
-      // ssl: {
-      //   rejectUnauthorized: false,
-      // },
+      ssl: {
+        rejectUnauthorized: false,
+      },
     }),
     AuthModule,
     AccountModule,
