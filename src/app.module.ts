@@ -18,6 +18,8 @@ import { ClientFavouriteProductModule } from "./modules/clients-favourites-produ
 
 dotenv.config();
 
+const isProductionEnv = process.env.APP_ENV === "production";
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -31,7 +33,7 @@ dotenv.config();
       autoLoadEntities: true,
       synchronize: false, // set to false in production
       ssl: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: !isProductionEnv,
       },
     }),
     AuthModule,
