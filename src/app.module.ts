@@ -32,9 +32,9 @@ const isProductionEnv = process.env.APP_ENV === "production";
       entities: [__dirname + "/../modules/**/*.entity{.ts,.js}"],
       autoLoadEntities: true,
       synchronize: false, // set to false in production
-      ssl: {
-        rejectUnauthorized: !isProductionEnv,
-      },
+      // ssl: {
+      //   rejectUnauthorized: !isProductionEnv,
+      // },
     }),
     AuthModule,
     AccountModule,

@@ -4,6 +4,7 @@ import { CategoryRepository } from "./category.repository";
 
 import { ImageService } from "../images/image.service";
 import { MasonryDto } from "./DTO/masonry.dto";
+import { HorizontalTilesDto } from "./DTO/horizontalTiles.dto";
 
 @Injectable()
 export class CategoryService {
@@ -19,6 +20,12 @@ export class CategoryService {
     const masonry = new MasonryDto(categoryName, imageUrls);
 
     return masonry;
+  }
+
+  async getHorizontalTiles(id: number): Promise<HorizontalTilesDto[]> {
+    const tiles = await this.imageService.getHorizontalTiles(id);
+    console.log(tiles);
+    return tiles;
   }
 
   async getName(id: number): Promise<string> {

@@ -13,6 +13,8 @@ import { ImageRepository } from "./image.repository";
 import { ImageDto } from "./DTO/image.dto";
 import { Image } from "./image.entity";
 
+import { HorizontalTilesDto } from "../categories/DTO/horizontalTiles.dto";
+
 @Injectable()
 export class ImageService {
   constructor(private readonly imageRepository: ImageRepository) {}
@@ -144,5 +146,22 @@ export class ImageService {
     );
 
     return downloadUrls;
+  }
+
+  async getHorizontalTiles(tilesId: number): Promise<HorizontalTilesDto[]> {
+    const storageRef = ref(storage, `images/horizontal-tiles/${tilesId}`);
+    const listResult = await listAll(storageRef);
+
+    const tiles = await Promise.all(
+      listResult.items.map(async (itemRef) => {
+        const downloadUrl = await getDownloadURL(itemRef);
+        return {
+          name: itemRef.name.split(".")[0],
+          imageUrl: downloadUrl,
+        };
+      })
+    );
+
+    return tiles;
   }
 }
