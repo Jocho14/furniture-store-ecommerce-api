@@ -30,4 +30,8 @@ export class ClientRepository {
     });
     return client ? client.client_id : null;
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

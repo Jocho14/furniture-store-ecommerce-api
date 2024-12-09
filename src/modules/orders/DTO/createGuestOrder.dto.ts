@@ -6,11 +6,11 @@ import { OrderProductDto } from "../../orders-products/DTO/orderProduct.dto";
 
 export class CreateGuestOrderDto {
   @IsNotEmpty()
-  readonly guestDto!: CreateGuestDto;
+  guestDto!: CreateGuestDto;
 
   @IsNotEmpty()
-  readonly shippingAddressDto!: CreateShippingAddressDto;
+  shippingAddressDto!: CreateShippingAddressDto;
 
   @IsNotEmpty()
-  readonly orderProductDtos!: OrderProductDto[];
+  orderProductDtos!: OrderProductDto[];
 }

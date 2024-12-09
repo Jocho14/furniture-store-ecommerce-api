@@ -71,7 +71,6 @@ export class OrderController {
   @Put(":id/cancel")
   @UseGuards(EmployeeGuard)
   async cancelOrder(@Param("id") id: number) {
-    console.log("cancelOrder");
     return await this.orderService.cancelOrder(id);
   }
 }

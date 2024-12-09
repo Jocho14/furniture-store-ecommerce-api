@@ -33,4 +33,8 @@ export class AccountRepository {
     });
     return account ? account.email : null;
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

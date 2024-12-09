@@ -36,6 +36,7 @@ import {
 } from "./responseType";
 
 import { ProductService } from "./product.service";
+import { Product } from "./product.entity";
 
 @Controller("Products")
 export class ProductController {
@@ -48,10 +49,17 @@ export class ProductController {
     return await this.productService.getExtendedPreviews(ids);
   }
 
+  @Get(":id/check-active")
+  async getProductById(
+    @Param("id") id: number
+  ): Promise<{ isActive: boolean }> {
+    const result = await this.productService.isProductActive(id);
+    return { isActive: result };
+  }
+
   @Get("all-with-thumbnails")
   @UseGuards(EmployeeGuard)
   async getAllWithThumbnails() {
-    console.log("entered")
     return await this.productService.getAllWithThumbnails();
   }
 
@@ -84,6 +92,16 @@ export class ProductController {
     return await this.productService.uploadFiles(id, files);
   }
 
+  @Post(":id/test/upload-files")
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadTestImage(
+    @Param("id") id: number,
+    @UploadedFile()
+    files: Express.Multer.File[]
+  ): Promise<string[] | undefined> {
+    return await this.productService.uploadTestFiles(id, files);
+  }
+
   @Post("add")
   @UseInterceptors(FileFieldsInterceptor([{ name: "images", maxCount: 10 }]))
   async add(
@@ -98,7 +116,6 @@ export class ProductController {
       quantity: parseInt(body.quantity, 10),
       category: body.category,
     };
-    console.log(body);
 
     return await this.productService.add(detailedProductDto);
   }
@@ -132,7 +149,7 @@ export class ProductController {
       quantity: parseInt(body.quantity, 10),
       category: body.category,
     };
-    console.log(body);
+
     return await this.productService.update(id, detailedProductDto);
   }
 

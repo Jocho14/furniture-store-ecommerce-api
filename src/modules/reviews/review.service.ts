@@ -24,7 +24,6 @@ export class ReviewService {
         const clientFirstName = await this.clientService.getUserFirstName(
           userId
         );
-        console.log("clientFirstName", clientFirstName);
 
         return {
           reviewId: review.review_id,
@@ -47,7 +46,7 @@ export class ReviewService {
     if (!clientId) {
       throw new Error("Client ID not found");
     }
-    console.log("add review client id: ", clientId);
+
     return await this.reviewRepository.addReview(
       productId,
       createReviewDto,

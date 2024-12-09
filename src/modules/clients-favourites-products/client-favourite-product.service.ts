@@ -73,6 +73,7 @@ export class ClientFavouriteProductService {
     const result = await this.clientFavouriteProductRepository.check(
       clientFavouriteProduct
     );
+
     return result ? true : false;
   }
 

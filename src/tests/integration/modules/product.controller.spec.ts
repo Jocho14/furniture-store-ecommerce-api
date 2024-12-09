@@ -1,46 +1,51 @@
-import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource, QueryRunner } from 'typeorm';
-import request from 'supertest';
+import { INestApplication } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { DataSource, QueryRunner } from "typeorm";
+import request from "supertest";
 
 import cookieParser from "cookie-parser";
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
-import { ProductService } from '../../../modules/products/product.service';
-import { ProductController } from '../../../modules/products/product.controller';
-import { ProductRepository } from '../../../modules/products/product.repository';
-import { Product } from '../../../modules/products/product.entity';
-import { ProductModule } from '../../../modules/products/product.module';
+import { ProductService } from "../../../modules/products/product.service";
+import { ProductController } from "../../../modules/products/product.controller";
+import { ProductRepository } from "../../../modules/products/product.repository";
+import { Product } from "../../../modules/products/product.entity";
+import { ProductModule } from "../../../modules/products/product.module";
 
-import { listProudctDto } from '../../../modules/products/DTO/listProduct.dto';
-import { ExtendedPreviewProductDto } from '../../../modules/products/DTO/extendedPreviewProduct.dto';
+import { ImageRepository } from "../../../modules/images/image.repository";
 
-import { JwtService } from '@nestjs/jwt';
-import { userRole } from '../../../auth/enum/userRole';
-import { ThumbnailProductDto } from '../../../modules/products/DTO/thumbnailProduct.dto';
+import { listProudctDto } from "../../../modules/products/DTO/listProduct.dto";
+import { ExtendedPreviewProductDto } from "../../../modules/products/DTO/extendedPreviewProduct.dto";
+import { PreviewProductDto } from "../../../modules/products/DTO/previewProduct.dto";
+import { DetailProductClientDto } from "../../../modules/products/DTO/detailProductClient.dto";
+
+import { JwtService } from "@nestjs/jwt";
+import { userRole } from "../../../auth/enum/userRole";
+import { ThumbnailProductDto } from "../../../modules/products/DTO/thumbnailProduct.dto";
 
 dotenv.config();
 
-describe('ProductController Integration Test', () => {
+describe("ProductController Integration Test", () => {
   let app: INestApplication;
   let service: ProductService;
   let dataSource: DataSource;
   let queryRunner: QueryRunner;
   let productRepository: ProductRepository;
+  let imageRepository: ImageRepository;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
         ProductModule,
         TypeOrmModule.forRoot({
-          type: 'postgres',
+          type: "postgres",
           host: process.env.TEST_DB_HOST,
           port: Number(process.env.TEST_DB_PORT),
           username: process.env.TEST_DB_USER,
           password: process.env.TEST_DB_PASSWORD,
           database: process.env.TEST_DB_NAME,
-          entities: [__dirname + '/../../../modules/**/*.entity.ts'],
+          entities: [__dirname + "/../../../modules/**/*.entity.ts"],
           autoLoadEntities: true,
           synchronize: false,
         }),
@@ -55,18 +60,20 @@ describe('ProductController Integration Test', () => {
     service = module.get<ProductService>(ProductService);
     dataSource = module.get<DataSource>(DataSource);
     productRepository = module.get<ProductRepository>(ProductRepository);
+    imageRepository = module.get<ImageRepository>(ImageRepository);
   });
 
   beforeEach(async () => {
-      queryRunner = dataSource.createQueryRunner();
-      await queryRunner.startTransaction();
-      await queryRunner.query(`
+    queryRunner = dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+    await queryRunner.query(`
       ALTER SEQUENCE products_product_id_seq RESTART WITH 1;
     `);
-      await queryRunner.commitTransaction();
+    await queryRunner.commitTransaction();
   });
 
   afterEach(async () => {
+    await imageRepository.deleteAllImages();
     await productRepository.deleteAll();
   });
 
@@ -77,16 +84,15 @@ describe('ProductController Integration Test', () => {
     }
   });
 
-  
-  it('should return product list', async () => {
-    const product1 = new Product('test product 1', 100, 'description 1');
-    const product2 = new Product('test product 2', 50, 'description 2');
-    
+  it("should return product list", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
+
     await productRepository.add(product1);
     await productRepository.add(product2);
 
     const response = await request(app.getHttpServer())
-      .get('/products/list')
+      .get("/products/list")
       .expect(200);
 
     const listProductDto1 = new listProudctDto(product1.name, product1.price);
@@ -94,58 +100,62 @@ describe('ProductController Integration Test', () => {
     listProductDto1.category = "";
     listProductDto1.productId = 1;
     listProductDto1.thumbnailUrl = "null";
-    
+
     const listProductDto2 = new listProudctDto(product2.name, product2.price);
     listProductDto2.averageRating = 0;
     listProductDto2.category = "";
     listProductDto2.productId = 2;
     listProductDto2.thumbnailUrl = "null";
 
-    expect(response.body).toEqual(
-      [
-        {...listProductDto1, price: listProductDto1.price.toString() + ".00"},
-        {...listProductDto2, price: listProductDto2.price.toString() + ".00"},
-      ]
-    );
+    expect(response.body).toEqual([
+      { ...listProductDto1, price: listProductDto1.price.toString() + ".00" },
+      { ...listProductDto2, price: listProductDto2.price.toString() + ".00" },
+    ]);
   });
 
-  it('should return extended preview', async () => {
-    const product = new Product('test product', 100, 'description');
+  it("should return extended preview", async () => {
+    const product = new Product("test product", 100, "description");
     const productId = await productRepository.add(product);
 
     const response = await request(app.getHttpServer())
       .post(`/products/extended-previews`)
-      .send({ids: [productId]})
+      .send({ ids: [productId] })
       .expect(201);
 
-    const extendedPreviewProductDto = new ExtendedPreviewProductDto(product.name, product.price);
+    const extendedPreviewProductDto = new ExtendedPreviewProductDto(
+      product.name,
+      product.price
+    );
     extendedPreviewProductDto.productId = 1;
     extendedPreviewProductDto.quantity = 0;
     extendedPreviewProductDto.thumbnailUrl = "null";
 
     expect(response.body).toEqual([
-      {...extendedPreviewProductDto, price: extendedPreviewProductDto.price.toString() + ".00"}]
-    );
+      {
+        ...extendedPreviewProductDto,
+        price: extendedPreviewProductDto.price.toString() + ".00",
+      },
+    ]);
   });
 
-  it('should return 401 instead of all products with thumbnails when not authorized', async () => {
-    const product1 = new Product('test product 1', 100, 'description 1');
-    const product2 = new Product('test product 2', 50, 'description 2');
+  it("should return 401 instead of all products with thumbnails when not authorized", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
 
     await productRepository.add(product1);
     await productRepository.add(product2);
 
     const response = await request(app.getHttpServer())
-      .get('/products/all-with-thumbnails')
-      .set('Cookie', ['auth_token=invalid_token'])
+      .get("/products/all-with-thumbnails")
+      .set("Cookie", ["auth_token=invalid_token"])
       .expect(401);
 
-    expect(response.body).toEqual({"message": "Unauthorized", "statusCode": 401});
+    expect(response.body).toEqual({ message: "Unauthorized", statusCode: 401 });
   });
 
-  it('should return all products with thumbnails when authorized', async () => {
-    const product1 = new Product('test product 1', 100, 'description 1');
-    const product2 = new Product('test product 2', 50, 'description 2');
+  it("should return all products with thumbnails when authorized", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
 
     const product1Id = await productRepository.add(product1);
     const product2Id = await productRepository.add(product2);
@@ -173,14 +183,93 @@ describe('ProductController Integration Test', () => {
     });
 
     const response = await request(app.getHttpServer())
-      .get('/products/all-with-thumbnails')
-      .set('Cookie', [`auth_token=${validToken}`])
+      .get("/products/all-with-thumbnails")
+      .set("Cookie", [`auth_token=${validToken}`])
       .expect(200);
 
     expect(response.body).toEqual([
-      {...thumbnailProductDto1, price: thumbnailProductDto1.price.toString() + ".00"},
-      {...thumbnailProductDto2, price: thumbnailProductDto2.price.toString() + ".00"},
+      {
+        ...thumbnailProductDto1,
+        price: thumbnailProductDto1.price.toString() + ".00",
+      },
+      {
+        ...thumbnailProductDto2,
+        price: thumbnailProductDto2.price.toString() + ".00",
+      },
     ]);
   });
 
+  it("should return product previews", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
+
+    const product1Id = await productRepository.add(product1);
+    const product2Id = await productRepository.add(product2);
+
+    const previewProductDto1 = new PreviewProductDto(
+      product1.name,
+      product1.price
+    );
+    previewProductDto1.productId = product1Id;
+    previewProductDto1.thumbnailUrl = "null";
+
+    const previewProductDto2 = new PreviewProductDto(
+      product2.name,
+      product2.price
+    );
+    previewProductDto2.productId = product2Id;
+    previewProductDto2.thumbnailUrl = "null";
+
+    const response = await request(app.getHttpServer())
+      .post("/products/previews")
+      .send({ ids: [product1Id, product2Id] })
+      .expect(201);
+
+    expect(response.body).toEqual([
+      {
+        ...previewProductDto1,
+        price: previewProductDto1.price.toString() + ".00",
+      },
+      {
+        ...previewProductDto2,
+        price: previewProductDto2.price.toString() + ".00",
+      },
+    ]);
+  });
+
+  it("should return product details for client", async () => {
+    const product = new Product("test product", 100, "description");
+    const productId = await productRepository.add(product);
+
+    const detailProductClientDto = new DetailProductClientDto(
+      product.name,
+      product.price
+    );
+    detailProductClientDto.imageUrls = [];
+    detailProductClientDto.description = "description";
+
+    const response = await request(app.getHttpServer())
+      .get(`/products/${productId}/details/client`)
+      .expect(200);
+
+    expect(response.body).toEqual({
+      ...detailProductClientDto,
+      price: detailProductClientDto.price.toString() + ".00",
+    });
+  });
+
+  // it('should properly upload files', async () => {
+  //   const product = new Product('test product', 100, 'description');
+  //   const productId = await productRepository.add(product);
+
+  //   const response = await request(app.getHttpServer())
+  //     .post(`/products/${productId}/test/upload-files`)
+  //     .attach('file', 'src/tests/integration/files/test.png')
+  //     .expect(201);
+
+  // });
+
+  it("test 2", async () => {});
+
+  it("test 3", async () => {});
 });

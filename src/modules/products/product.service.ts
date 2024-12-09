@@ -105,6 +105,10 @@ export class ProductService {
     return extendedPreviews;
   }
 
+  async isProductActive(productId: number): Promise<boolean> {
+    return await this.productRepository.isProductActive(productId);
+  }
+
   async getPreviews(ids: number[]): Promise<PreviewProductDto[]> {
     const products = await this.productRepository.getByIds(ids);
     if (!products) {
@@ -132,6 +136,14 @@ export class ProductService {
   ): Promise<string[] | undefined> {
     const imageDto = new ImageDto(id, files);
     return await this.imageService.uploadImages(imageDto);
+  }
+
+  async uploadTestFiles(
+    id: number,
+    files: Express.Multer.File[]
+  ): Promise<string[] | undefined> {
+    const imageDto = new ImageDto(id, files);
+    return await this.imageService.uploadTestImages(imageDto);
   }
 
   async add(
@@ -170,8 +182,6 @@ export class ProductService {
 
       return listProudctDto;
     } catch (error) {
-      console.log(error);
-      console.log("eee");
       return { error: "An error occurred" };
     }
   }
@@ -302,9 +312,8 @@ export class ProductService {
     if (!req.user) {
       return null;
     }
-    console.log("add review user id: ", req.user.user_id);
     const clientId = await this.userService.getClientId(req.user.user_id);
-    console.log("add review client id: ", clientId);
+
     return await this.reviewService.addReview(productId, body, clientId);
   }
 

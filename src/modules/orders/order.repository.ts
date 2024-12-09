@@ -49,4 +49,8 @@ export class OrderRepository {
       { status: OrderStatus.CANCELED }
     );
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

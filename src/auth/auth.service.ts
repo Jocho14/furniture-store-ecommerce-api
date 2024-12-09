@@ -37,7 +37,6 @@ export class AuthService {
       };
     }
     const { password_hash, ...account } = findUser;
-
     const token = this.jwtService.sign(account);
     return { status: AuthStatus.SUCCESS, token };
   }

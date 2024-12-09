@@ -19,7 +19,6 @@ export class ImageService {
 
   async uploadImages(imageDto: ImageDto): Promise<string[] | undefined> {
     const downloadUrls: string[] = [];
-
     for (const [index, file] of imageDto.files.entries()) {
       const storageRef = ref(
         storage,
@@ -28,7 +27,6 @@ export class ImageService {
           `${imageDto.productId.toString()}_${index}`
         )
       );
-
       const blob = new Blob([file.buffer], { type: file.mimetype });
       const uploadResult = await uploadBytes(storageRef, blob);
       const downloadUrl = await getDownloadURL(uploadResult.ref);
@@ -42,6 +40,34 @@ export class ImageService {
 
       await this.imageRepository.save(image);
 
+      downloadUrls.push(downloadUrl);
+    }
+
+    return downloadUrls;
+  }
+
+  async uploadTestImages(imageDto: ImageDto): Promise<string[] | undefined> {
+    const downloadUrls: string[] = [];
+    for (const [index, file] of imageDto.files.entries()) {
+      const storageRef = ref(
+        storage,
+        firestoreConfig.storagePaths.testProductImage(
+          imageDto.productId,
+          `${imageDto.productId.toString()}_${index}`
+        )
+      );
+      const blob = new Blob([file.buffer], { type: file.mimetype });
+      const uploadResult = await uploadBytes(storageRef, blob);
+      const downloadUrl = await getDownloadURL(uploadResult.ref);
+
+      const image = new Image(
+        imageDto.productId,
+        downloadUrl,
+        file.filename,
+        index === 0
+      );
+
+      await this.imageRepository.save(image);
       downloadUrls.push(downloadUrl);
     }
 

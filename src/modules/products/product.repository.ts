@@ -23,6 +23,11 @@ export class ProductRepository {
     });
   }
 
+  async isProductActive(id: number): Promise<boolean> {
+    const product = await this.repository.findOne({where: {product_id: id}});
+    return product ? product.is_active : false;
+  }
+
   async getById(id: number): Promise<Product | null> {
     return await this.repository.findOne({ where: { product_id: id } });
   }

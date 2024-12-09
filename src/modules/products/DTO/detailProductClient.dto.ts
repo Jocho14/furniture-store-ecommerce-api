@@ -4,8 +4,8 @@ import { BaseProductDto } from "./baseProduct.dto";
 
 export class DetailProductClientDto extends BaseProductDto {
   @IsArray()
-  readonly imageUrls!: string[];
+  imageUrls!: string[];
 
   @IsString()
-  readonly description!: string;
+  description!: string;
 }

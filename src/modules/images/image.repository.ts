@@ -39,4 +39,8 @@ export class ImageRepository {
   async deleteAll(productId: number): Promise<void> {
     await this.repository.delete({ product: { product_id: productId } });
   }
+
+  async deleteAllImages(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

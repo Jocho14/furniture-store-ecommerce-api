@@ -30,4 +30,8 @@ export class UserRepository {
     if (!id) return null;
     return await this.repository.findOne({ where: { user_id: id } });
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

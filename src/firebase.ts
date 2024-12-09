@@ -17,11 +17,18 @@ const firebaseConfig = {
 export const firestoreConfig = {
   storagePaths: {
     productionImagesRootPath: "images/products",
+    testProductsImagesRootPath: "test-images/products",
     allProductsImages(productId: string) {
       return `${this.productionImagesRootPath}/${productId}`;
     },
     productImage(productId: string | number, fileName: string) {
       return `${this.productionImagesRootPath}/${productId}/${fileName}`;
+    },
+    testProductsImages(productId: string) {
+      return `${this.testProductsImagesRootPath}/${productId}`;
+    },
+    testProductImage(productId: string | number, fileName: string) {
+      return `${this.testProductsImagesRootPath}/${productId}/${fileName}`;
     },
   },
 };

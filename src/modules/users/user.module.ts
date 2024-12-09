@@ -13,7 +13,7 @@ import { EmployeeModule } from "../employees/employee.module";
     TypeOrmModule.forFeature([User]),
     forwardRef(() => ClientModule),
     forwardRef(() => EmployeeModule),
-    AccountModule,
+    forwardRef(() => AccountModule),
   ],
   providers: [UserService, UserRepository],
   controllers: [UserController],

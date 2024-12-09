@@ -40,4 +40,8 @@ export class ClientFavouriteProductRepository {
       (favouriteProduct) => favouriteProduct.product_id
     );
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

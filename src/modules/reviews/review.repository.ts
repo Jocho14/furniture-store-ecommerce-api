@@ -29,4 +29,8 @@ export class ReviewRepository {
       comment: review.comment,
     });
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

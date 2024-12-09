@@ -11,7 +11,7 @@ import { ClientFavouriteProductModule } from "../clients-favourites-products/cli
   imports: [
     TypeOrmModule.forFeature([Client]),
     forwardRef(() => UserModule),
-    ClientFavouriteProductModule,
+    forwardRef(() => ClientFavouriteProductModule),
   ],
   providers: [ClientService, ClientRepository],
   controllers: [ClientController],

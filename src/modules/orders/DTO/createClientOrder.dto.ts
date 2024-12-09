@@ -6,8 +6,8 @@ import { OrderProductDto } from "../../orders-products/DTO/orderProduct.dto";
 
 export class CreateClientOrderDto {
   @IsNotEmpty()
-  readonly shippingAddressDto!: CreateShippingAddressDto;
+  shippingAddressDto!: CreateShippingAddressDto;
 
   @IsNotEmpty()
-  readonly orderProductDtos!: OrderProductDto[];
+  orderProductDtos!: OrderProductDto[];
 }

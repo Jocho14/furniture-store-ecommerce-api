@@ -3,27 +3,27 @@ import { AccountCreateDto } from "../../accounts/DTO/accountCreate.dto";
 
 export class UserCreateDto {
   @IsNotEmpty()
-  readonly account!: AccountCreateDto;
+  account!: AccountCreateDto;
 
   @IsString()
   @IsNotEmpty()
-  readonly firstName!: string;
+  firstName!: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly lastName!: string;
+  lastName!: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly phoneNumber!: string;
+  phoneNumber!: string;
 
   @IsDate()
   @IsNotEmpty()
-  readonly dateOfBirth!: Date;
+  dateOfBirth!: Date;
 }
 
 export class EmployeeCreateDto extends UserCreateDto {
   @IsString()
   @IsNotEmpty()
-  readonly secret!: string;
+  secret!: string;
 }

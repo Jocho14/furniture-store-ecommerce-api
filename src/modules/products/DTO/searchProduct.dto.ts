@@ -2,17 +2,17 @@ import { IsString, IsNumber, IsNotEmpty } from "class-validator";
 
 export class SearchProductDto {
   @IsNumber()
-  readonly productId?: number;
+  productId?: number;
 
   @IsString()
   @IsNotEmpty()
-  readonly name!: string;
+  name!: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly thumbnailUrl!: string;
+  thumbnailUrl!: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly category!: string;
+  category!: string;
 }

@@ -47,15 +47,12 @@ export class ClientFavouriteProductController {
   async checkFavouriteProduct(
     @Req() req: AuthenticatedUser,
     @Param("id") productId: number
-  ): Promise<boolean> {
-    console.log("called ");
+  ): Promise<{isFavourite: boolean}> {
     if (!req) {
-      return false;
+      return {isFavourite: false};
     }
-    return await this.clientFavouriteProductService.checkFavouriteProduct(
-      req,
-      productId
-    );
+    const result = await this.clientFavouriteProductService.checkFavouriteProduct(req, productId);
+    return {isFavourite: result};
   }
 
   @Get("all")
