@@ -250,7 +250,57 @@ describe("ProductController Integration Test", () => {
     ]);
   });
 
-  it("should return product details for client", async () => {});
+  it("should not add review when unauthorized", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    await productRepository.add(product1);
 
-  it("test 1", async () => {});
+    const accountCreateDto = new AccountCreateDto();
+    accountCreateDto.email = "example@email.com";
+    accountCreateDto.password = "password";
+
+    const userCreateDto = new UserCreateDto();
+    userCreateDto.account = accountCreateDto;
+    userCreateDto.dateOfBirth = new Date("1990-01-01");
+    userCreateDto.firstName = "Jan";
+    userCreateDto.lastName = "Kowalski";
+    userCreateDto.phoneNumber = "123456789";
+
+    await request(app.getHttpServer())
+      .post("/users/create-client")
+      .send({ ...userCreateDto })
+      .expect(201);
+
+    const createReviewDto = new CreateReviewDto(4, "good product");
+
+    await request(app.getHttpServer())
+      .post("/products/1/add-review")
+      .set("Cookie", "auth_token=invalid_token")
+      .send({ ...createReviewDto })
+      .expect(401);
+  });
+
+  it("should not return searched products when query param is empty", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
+
+    const product1Id = await productRepository.add(product1);
+    const product2Id = await productRepository.add(product2);
+
+    const searchProductDto1 = new SearchProductDto();
+    searchProductDto1.productId = product1Id;
+    searchProductDto1.name = "test product 1";
+    searchProductDto1.thumbnailUrl = "null";
+    searchProductDto1.category = "";
+
+    const searchProductDto2 = new SearchProductDto();
+    searchProductDto2.productId = product2Id;
+    searchProductDto2.name = "test product 2";
+    searchProductDto2.thumbnailUrl = "null";
+    searchProductDto2.category = "";
+
+    await request(app.getHttpServer())
+      .get("/products/search")
+      .query({ query: "" })
+      .expect(400);
+  });
 });

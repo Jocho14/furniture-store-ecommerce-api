@@ -24,7 +24,6 @@ export class CategoryService {
 
   async getHorizontalTiles(id: number): Promise<HorizontalTilesDto[]> {
     const tiles = await this.imageService.getHorizontalTiles(id);
-    console.log(tiles);
     return tiles;
   }
 

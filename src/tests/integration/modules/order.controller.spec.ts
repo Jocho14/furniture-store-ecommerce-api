@@ -392,7 +392,7 @@ describe("ProductController Integration Test", () => {
     expect(manageDetailsAfter.body.status).toEqual("completed");
   });
 
-  it("should create a guest order 3", async () => {
+  it("should return order details", async () => {
     const product1 = new Product("test product 1", 100, "description 1");
     const product2 = new Product("test product 2", 50, "description 2");
 
@@ -422,15 +422,219 @@ describe("ProductController Integration Test", () => {
     createGuestOrderDto.shippingAddressDto = createShippingAddressDto;
     createGuestOrderDto.orderProductDtos = orderProductDtos;
 
+    const accountCreateDto = new AccountCreateDto();
+    accountCreateDto.email = "example@email.com";
+    accountCreateDto.password = "password";
+
+    const userCreateDto = new UserCreateDto();
+    userCreateDto.account = accountCreateDto;
+    userCreateDto.dateOfBirth = new Date("1990-01-01");
+    userCreateDto.firstName = "Jan";
+    userCreateDto.lastName = "Kowalski";
+    userCreateDto.phoneNumber = "123456789";
+
     await request(app.getHttpServer())
-      .post("/Orders/create-guest-order")
+      .post("/users/create-employee")
+      .send({ ...userCreateDto, secret: process.env.EMPLOYEE_SECRET })
+      .expect(201);
+
+    const login = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send({ ...accountCreateDto })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post("/orders/create-guest-order")
       .send(createGuestOrderDto)
       .expect(201);
+
+    await request(app.getHttpServer())
+      .get("/orders/1/manage")
+      .set("Cookie", [`${login.headers["set-cookie"]}`])
+      .expect(200);
   });
 
-  it("should complete an order 4", async () => {});
+  it("should return client e-mail from an order", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
 
-  it("should complete an order 5", async () => {});
+    const product1Id = await productRepository.add(product1);
+    const product2Id = await productRepository.add(product2);
 
-  it("should complete an order 6", async () => {});
+    const createClientOrderDto = new CreateClientOrderDto();
+
+    const accountCreateDto = new AccountCreateDto();
+    accountCreateDto.email = "example@email.com";
+    accountCreateDto.password = "password";
+
+    const userCreateDto = new UserCreateDto();
+    userCreateDto.account = accountCreateDto;
+    userCreateDto.dateOfBirth = new Date("1990-01-01");
+    userCreateDto.firstName = "Jan";
+    userCreateDto.lastName = "Kowalski";
+    userCreateDto.phoneNumber = "123456789";
+
+    const createShippingAddressDto = new CreateShippingAddressDto();
+    createShippingAddressDto.city = "Wroclaw";
+    createShippingAddressDto.streetAddress = "Ul. 3 Maja";
+    createShippingAddressDto.postalCode = "00-000";
+    createShippingAddressDto.houseNumber = "12";
+    createShippingAddressDto.apartmentNumber = "1";
+
+    await request(app.getHttpServer())
+      .post("/users/create-client")
+      .send({ ...userCreateDto })
+      .expect(201);
+
+    const login = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send({ ...accountCreateDto })
+      .expect(201);
+
+    const orderProductDto1 = new OrderProductDto(product1Id, 2);
+    const orderProductDto2 = new OrderProductDto(product2Id, 2);
+    const orderProductDtos = [orderProductDto1, orderProductDto2];
+
+    createClientOrderDto.shippingAddressDto = createShippingAddressDto;
+    createClientOrderDto.orderProductDtos = orderProductDtos;
+
+    await request(app.getHttpServer())
+      .post("/orders/create-client-order")
+      .send(createClientOrderDto)
+      .set("Cookie", [`${login.headers["set-cookie"]}`])
+      .expect(201);
+
+    const email = await request(app.getHttpServer())
+      .get(`/orders/1/client-email`)
+      .expect(200);
+
+    expect(email.text).toEqual(accountCreateDto.email);
+  });
+
+  it("should not create client order when unauthorized", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
+
+    const product1Id = await productRepository.add(product1);
+    const product2Id = await productRepository.add(product2);
+
+    const createClientOrderDto = new CreateClientOrderDto();
+
+    const accountCreateDto = new AccountCreateDto();
+    accountCreateDto.email = "example@email.com";
+    accountCreateDto.password = "password";
+
+    const userCreateDto = new UserCreateDto();
+    userCreateDto.account = accountCreateDto;
+    userCreateDto.dateOfBirth = new Date("1990-01-01");
+    userCreateDto.firstName = "Jan";
+    userCreateDto.lastName = "Kowalski";
+    userCreateDto.phoneNumber = "123456789";
+
+    const createShippingAddressDto = new CreateShippingAddressDto();
+    createShippingAddressDto.city = "Wroclaw";
+    createShippingAddressDto.streetAddress = "Ul. 3 Maja";
+    createShippingAddressDto.postalCode = "00-000";
+    createShippingAddressDto.houseNumber = "12";
+    createShippingAddressDto.apartmentNumber = "1";
+
+    await request(app.getHttpServer())
+      .post("/users/create-client")
+      .send({ ...userCreateDto })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post("/auth/login")
+      .send({ ...accountCreateDto })
+      .expect(201);
+
+    const orderProductDto1 = new OrderProductDto(product1Id, 2);
+    const orderProductDto2 = new OrderProductDto(product2Id, 2);
+    const orderProductDtos = [orderProductDto1, orderProductDto2];
+
+    createClientOrderDto.shippingAddressDto = createShippingAddressDto;
+    createClientOrderDto.orderProductDtos = orderProductDtos;
+
+    await request(app.getHttpServer())
+      .post("/orders/create-client-order")
+      .send(createClientOrderDto)
+      .set("Cookie", "auth_token=invalid_token")
+      .expect(401);
+  });
+
+  it("should not cancel an order when not authorized", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
+
+    const product1Id = await productRepository.add(product1);
+    const product2Id = await productRepository.add(product2);
+
+    const createGuestOrderDto = new CreateGuestOrderDto();
+
+    const createGuestDto = new CreateGuestDto();
+    createGuestDto.firstName = "Jan";
+    createGuestDto.lastName = "Kowalski";
+    createGuestDto.email = "g@email.com";
+    createGuestDto.phoneNumber = "123456789";
+
+    const createShippingAddressDto = new CreateShippingAddressDto();
+    createShippingAddressDto.city = "Wroclaw";
+    createShippingAddressDto.streetAddress = "Ul. 3 Maja";
+    createShippingAddressDto.postalCode = "00-000";
+    createShippingAddressDto.houseNumber = "12";
+    createShippingAddressDto.apartmentNumber = "1";
+
+    const orderProductDto1 = new OrderProductDto(product1Id, 2);
+    const orderProductDto2 = new OrderProductDto(product2Id, 2);
+    const orderProductDtos = [orderProductDto1, orderProductDto2];
+
+    createGuestOrderDto.guestDto = createGuestDto;
+    createGuestOrderDto.shippingAddressDto = createShippingAddressDto;
+    createGuestOrderDto.orderProductDtos = orderProductDtos;
+
+    const accountCreateDto = new AccountCreateDto();
+    accountCreateDto.email = "example@email.com";
+    accountCreateDto.password = "password";
+
+    const userCreateDto = new UserCreateDto();
+    userCreateDto.account = accountCreateDto;
+    userCreateDto.dateOfBirth = new Date("1990-01-01");
+    userCreateDto.firstName = "Jan";
+    userCreateDto.lastName = "Kowalski";
+    userCreateDto.phoneNumber = "123456789";
+
+    await request(app.getHttpServer())
+      .post("/users/create-employee")
+      .send({ ...userCreateDto, secret: process.env.EMPLOYEE_SECRET })
+      .expect(201);
+
+    const login = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send({ ...accountCreateDto })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post("/orders/create-guest-order")
+      .send(createGuestOrderDto)
+      .expect(201);
+
+    const manageDetailsBefore = await request(app.getHttpServer())
+      .get("/orders/1/manage")
+      .set("Cookie", [`${login.headers["set-cookie"]}`])
+      .expect(200);
+
+    expect(manageDetailsBefore.body.status).toEqual("pending");
+
+    await request(app.getHttpServer())
+      .put("/orders/1/cancel")
+      .set("Cookie", "auth_token=invalid_token")
+      .expect(401);
+
+    const manageDetailsAfter = await request(app.getHttpServer())
+      .get("/orders/1/manage")
+      .set("Cookie", [`${login.headers["set-cookie"]}`])
+      .expect(200);
+
+    expect(manageDetailsAfter.body.status).toEqual("pending");
+  });
 });

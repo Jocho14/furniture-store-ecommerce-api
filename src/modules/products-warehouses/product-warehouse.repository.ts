@@ -46,4 +46,8 @@ export class ProductWarehouseRepository {
     );
     return quantity;
   }
+
+  async deleteAll(): Promise<void> {
+    await this.repository.delete({});
+  }
 }

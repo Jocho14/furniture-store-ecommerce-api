@@ -125,7 +125,7 @@ describe("ProductController Integration Test", () => {
       .expect(401);
   });
 
-  it("should return account basic info", async () => {
+  it("should return account basic info for client", async () => {
     const accountCreateDto = new AccountCreateDto();
     accountCreateDto.email = "example@email.com";
     accountCreateDto.password = "password";
@@ -155,6 +155,40 @@ describe("ProductController Integration Test", () => {
     expect(basicInfo.body).toEqual({
       ...basicInfo.body,
       role: userRole.CLIENT,
+      firstName: userCreateDto.firstName,
+    });
+  });
+
+  it("should return account basic info for employee", async () => {
+    const accountCreateDto = new AccountCreateDto();
+    accountCreateDto.email = "example@email.com";
+    accountCreateDto.password = "password";
+
+    const userCreateDto = new UserCreateDto();
+    userCreateDto.account = accountCreateDto;
+    userCreateDto.dateOfBirth = new Date("1990-01-01");
+    userCreateDto.firstName = "Jan";
+    userCreateDto.lastName = "Kowalski";
+    userCreateDto.phoneNumber = "123456789";
+
+    await request(app.getHttpServer())
+      .post("/users/create-employee")
+      .send({ ...userCreateDto, secret: process.env.EMPLOYEE_SECRET })
+      .expect(201);
+
+    const login = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send({ ...accountCreateDto })
+      .expect(201);
+
+    const basicInfo = await request(app.getHttpServer())
+      .get("/users/account-basic-info")
+      .set("Cookie", [`${login.headers["set-cookie"]}`])
+      .expect(200);
+
+    expect(basicInfo.body).toEqual({
+      ...basicInfo.body,
+      role: userRole.EMPLOYEE,
       firstName: userCreateDto.firstName,
     });
   });

@@ -5,8 +5,8 @@ import { BaseProductDto } from "./baseProduct.dto";
 export class PaymentProductDto extends BaseProductDto {
   @IsNotEmpty()
   @IsNumber()
-  readonly productId!: number;
+  productId!: number;
 
   @IsArray()
-  readonly imageUrls!: string[];
+  imageUrls!: string[];
 }

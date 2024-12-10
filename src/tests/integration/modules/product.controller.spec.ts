@@ -23,6 +23,7 @@ import { DetailProductClientDto } from "../../../modules/products/DTO/detailProd
 import { JwtService } from "@nestjs/jwt";
 import { userRole } from "../../../auth/enum/userRole";
 import { ThumbnailProductDto } from "../../../modules/products/DTO/thumbnailProduct.dto";
+import { PaymentProductDto } from "../../../modules/products/DTO/paymentProduct.dto";
 
 dotenv.config();
 
@@ -68,6 +69,15 @@ describe("ProductController Integration Test", () => {
     await queryRunner.startTransaction();
     await queryRunner.query(`
       ALTER SEQUENCE products_product_id_seq RESTART WITH 1;
+    `);
+    await queryRunner.query(`
+      ALTER SEQUENCE accounts_account_id_seq RESTART WITH 1;
+    `);
+    await queryRunner.query(`
+      ALTER SEQUENCE users_user_id_seq RESTART WITH 1;
+    `);
+    await queryRunner.query(`
+      ALTER SEQUENCE reviews_review_id_seq RESTART WITH 1;
     `);
     await queryRunner.commitTransaction();
   });
@@ -258,18 +268,35 @@ describe("ProductController Integration Test", () => {
     });
   });
 
-  // it('should properly upload files', async () => {
-  //   const product = new Product('test product', 100, 'description');
-  //   const productId = await productRepository.add(product);
+  it("should return product payment details", async () => {
+    const product1 = new Product("test product 1", 100, "description 1");
+    const product2 = new Product("test product 2", 50, "description 2");
 
-  //   const response = await request(app.getHttpServer())
-  //     .post(`/products/${productId}/test/upload-files`)
-  //     .attach('file', 'src/tests/integration/files/test.png')
-  //     .expect(201);
+    const product1Id = await productRepository.add(product1);
+    const product2Id = await productRepository.add(product2);
 
-  // });
+    const paymentProduct1Dto = new PaymentProductDto(
+      product1.name,
+      product1.price
+    );
+    paymentProduct1Dto.imageUrls = [];
+    paymentProduct1Dto.productId = product1Id;
 
-  it("test 2", async () => {});
+    const paymentProduct2Dto = new PaymentProductDto(
+      product2.name,
+      product2.price
+    );
+    paymentProduct2Dto.imageUrls = [];
+    paymentProduct2Dto.productId = product2Id;
 
-  it("test 3", async () => {});
+    const response = await request(app.getHttpServer())
+      .post(`/products/payment-details`)
+      .send({ ids: [product1Id, product2Id] })
+      .expect(201);
+
+    expect(response.body).toEqual([
+      { ...paymentProduct1Dto, price: paymentProduct1Dto.price + ".00" },
+      { ...paymentProduct2Dto, price: paymentProduct2Dto.price + ".00" },
+    ]);
+  });
 });

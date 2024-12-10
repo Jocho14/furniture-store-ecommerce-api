@@ -80,4 +80,34 @@ describe("CategoryController Integration Test", () => {
       ],
     });
   });
+
+  it("should return horizontal tiles items", async () => {
+    const categoryId = 1;
+    const response = await request(app.getHttpServer())
+      .get(`/categories/${categoryId}/horizontal-tiles`)
+      .expect(200);
+
+    expect(response.body).toEqual([
+      {
+        name: "bathroom",
+        imageUrl:
+          "https://firebasestorage.googleapis.com/v0/b/furniture-store-ecommerce.appspot.com/o/images%2Fhorizontal-tiles%2F1%2Fbathroom.png?alt=media&token=73708dad-c840-4c48-926c-0e28aced8f09",
+      },
+      {
+        name: "bedroom",
+        imageUrl:
+          "https://firebasestorage.googleapis.com/v0/b/furniture-store-ecommerce.appspot.com/o/images%2Fhorizontal-tiles%2F1%2Fbedroom.png?alt=media&token=7d8253b5-d3d7-483c-8a50-b30abf4f1af5",
+      },
+      {
+        name: "kitchen",
+        imageUrl:
+          "https://firebasestorage.googleapis.com/v0/b/furniture-store-ecommerce.appspot.com/o/images%2Fhorizontal-tiles%2F1%2Fkitchen.png?alt=media&token=af162897-66eb-4a5f-bca3-ed737dbdec81",
+      },
+      {
+        name: "living-room",
+        imageUrl:
+          "https://firebasestorage.googleapis.com/v0/b/furniture-store-ecommerce.appspot.com/o/images%2Fhorizontal-tiles%2F1%2Fliving-room.webp?alt=media&token=0fd96194-a63c-4303-b476-f348e7c1261f",
+      },
+    ]);
+  });
 });

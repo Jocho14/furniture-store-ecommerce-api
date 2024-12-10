@@ -4,14 +4,14 @@ import { BaseProductDto } from "./baseProduct.dto";
 
 export class DetailProductEmployeeDto extends BaseProductDto {
   @IsArray()
-  readonly images!: Express.Multer.File[] | string[];
+  images!: Express.Multer.File[] | string[];
 
   @IsString()
-  readonly description!: string;
+  description!: string;
 
   @IsNumber()
-  readonly quantity!: number;
+  quantity!: number;
 
   @IsString()
-  readonly category!: string;
+  category!: string;
 }
